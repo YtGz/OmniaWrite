@@ -1,8 +1,11 @@
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const workboxPlugin = require("workbox-webpack-plugin");
+const webpack = require("webpack");
 const workboxConfig = require("./workbox-config.js")
 
 const path = require("path");
+
+require("dotenv").config();
 
 const mode = process.env.NODE_ENV || "development";
 const prod = mode === "production";
@@ -68,7 +71,11 @@ module.exports = {
     new MiniCssExtractPlugin({
       filename: "[name].css"
     }),
-    new workboxPlugin.GenerateSW(workboxConfig)
+    new workboxPlugin.GenerateSW(workboxConfig),
+    new webpack.DefinePlugin({
+      "process.env.APPWRITE_ENDPOINT": JSON.stringify(process.env.APPWRITE_ENDPOINT || "https://appwrite.datawarp.dev/v1"),
+      "process.env.APPWRITE_PROJECT": JSON.stringify(process.env.APPWRITE_PROJECT || "")
+    })
   ],
   node: {
     fs: "empty"

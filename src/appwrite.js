@@ -2,9 +2,9 @@ import Appwrite from "appwrite";
 import { get } from "svelte/store";
 import { state, settings } from "./stores";
 
-const APP_ENDPOINT = "https://shelf.omniawrite.com/v1";
-const APP_PROJECT = "5e890a780e6b2";
-const APP_EXT_HOST = "https://external.omniawrite.com/";
+const APP_ENDPOINT = process.env.APPWRITE_ENDPOINT;
+const APP_PROJECT = process.env.APPWRITE_PROJECT;
+const APP_EXT_HOST = window.location.origin + "/";
 
 const SDK = new Appwrite();
 
