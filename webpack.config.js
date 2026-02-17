@@ -16,7 +16,20 @@ module.exports = {
   },
   resolve: {
     alias: {
-      svelte: path.resolve("node_modules", "svelte")
+      // Svelte 5 subpath exports
+      "svelte/internal/client": path.resolve("node_modules", "svelte/src/internal/client/index.js"),
+      "svelte/internal/disclose-version": path.resolve("node_modules", "svelte/src/internal/disclose-version.js"),
+      "svelte/internal/flags/legacy": path.resolve("node_modules", "svelte/src/internal/flags/legacy.js"),
+      "svelte/internal/flags/async": path.resolve("node_modules", "svelte/src/internal/flags/async.js"),
+      "svelte/internal/server": path.resolve("node_modules", "svelte/src/internal/server/index.js"),
+      "svelte/internal": path.resolve("node_modules", "svelte/src/internal/index.js"),
+      "svelte/store": path.resolve("node_modules", "svelte/src/store/index-client.js"),
+      "svelte/transition": path.resolve("node_modules", "svelte/src/transition/index.js"),
+      "svelte/animate": path.resolve("node_modules", "svelte/src/animate/index.js"),
+      "svelte/easing": path.resolve("node_modules", "svelte/src/easing/index.js"),
+      "svelte/motion": path.resolve("node_modules", "svelte/src/motion/index.js"),
+      "svelte/legacy": path.resolve("node_modules", "svelte/src/legacy/legacy-client.js"),
+      svelte: path.resolve("node_modules", "svelte/src/index-client.js")
     },
     extensions: [".mjs", ".js", ".svelte"],
     mainFields: ["svelte", "browser", "module", "main"],
