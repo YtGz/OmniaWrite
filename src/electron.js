@@ -5,10 +5,10 @@ const {
   BrowserWindow,
   Menu,
   MenuItem,
+  net,
 } = require("electron");
 
 const path = require("path");
-const fetch = require("node-fetch");
 const semver = require("semver");
 const ipc = require("electron").ipcMain;
 
@@ -106,7 +106,7 @@ const createLoadingScreen = () => {
     loadingScreen.show();
     let status = false;
     let latest = false;
-    fetch(
+    net.fetch(
       "https://api.github.com/repos/torstendittmann/omniawrite/releases/latest"
     )
       .then(response => {

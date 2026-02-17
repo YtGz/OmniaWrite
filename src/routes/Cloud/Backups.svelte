@@ -28,6 +28,8 @@
       f = Math.floor(Math.log(a) / Math.log(c));
     return parseFloat((a / Math.pow(c, f)).toFixed(d)) + " " + e[f];
   }
+
+  const getTimestamp = file => new Date(file.$createdAt).getTime() / 1000;
 </script>
 
 {#if isLoadingBackup}
@@ -47,8 +49,8 @@
       </Row>
       {#each backups.files as backup}
         <Row on:click={() => restoreBackup(backup.$id)}>
-          <Cell label="Timestamp">{formatDate(backup.dateCreated)}</Cell>
-          <Cell label="Age">{formatDistance(backup.dateCreated)}</Cell>
+          <Cell label="Timestamp">{formatDate(getTimestamp(backup))}</Cell>
+          <Cell label="Age">{formatDistance(getTimestamp(backup))}</Cell>
           <Cell label="Size">{formatBytes(backup.sizeOriginal)}</Cell>
         </Row>
       {/each}

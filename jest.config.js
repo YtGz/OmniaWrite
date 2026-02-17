@@ -1,7 +1,7 @@
 module.exports = {
   transform: {
     "^.+\\.js$": "babel-jest",
-    "^.+\\.svelte$": "jest-transform-svelte",
+    "^.+\\.svelte$": "svelte-jester",
   },
   moduleFileExtensions: ["js", "svelte", "json"],
   moduleNameMapper: {
@@ -9,6 +9,7 @@ module.exports = {
       "<rootDir>/__mocks__/fileMock.js",
     "\\.(css|scss|stylesheet)$": "<rootDir>/__mocks__/styleMock.js",
   },
-  setupFilesAfterEnv: ["@testing-library/jest-dom/extend-expect"],
+  setupFilesAfterEnv: ["@testing-library/jest-dom"],
   testPathIgnorePatterns: ["/node_modules/", "/build/", "/storybook-static/"],
+  testEnvironment: "jsdom",
 };

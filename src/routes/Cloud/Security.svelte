@@ -10,6 +10,8 @@
   const logoutSession = id => {
     cloud.logoutSession(id);
   };
+
+  const getTimestamp = datetime => new Date(datetime).getTime() / 1000;
 </script>
 
 <h2>{$_('cloud.security.devices.title')}</h2>
@@ -46,8 +48,8 @@
     </Row>
     {#each logs.logs as log}
       <Row>
-        <Cell label="Timestamp">{formatDate(log.time)}</Cell>
-        <Cell label="Age">{formatDistance(log.time)}</Cell>
+        <Cell label="Timestamp">{formatDate(getTimestamp(log.time))}</Cell>
+        <Cell label="Age">{formatDistance(getTimestamp(log.time))}</Cell>
         <Cell label="Event">{$_(`cloud.security.logs.${log.event}`)}</Cell>
       </Row>
     {/each}

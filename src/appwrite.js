@@ -1,16 +1,21 @@
-import Appwrite from "appwrite";
+import { Client, Account, Storage, ID, Query } from "appwrite";
 import { get } from "svelte/store";
 import { state, settings } from "./stores";
 
 const APP_ENDPOINT = process.env.APPWRITE_ENDPOINT;
 const APP_PROJECT = process.env.APPWRITE_PROJECT;
 const APP_EXT_HOST = window.location.origin + "/";
+const APP_BUCKET_ID = process.env.APPWRITE_BUCKET_ID || "backups";
 
-const SDK = new Appwrite();
+const client = new Client();
 
-SDK.setEndpoint(APP_ENDPOINT)
+client
+  .setEndpoint(APP_ENDPOINT)
   .setProject(APP_PROJECT)
   .setLocale(get(settings).language || "en");
+
+const account = new Account(client);
+const storage = new Storage(client);
 
 const cloud = {
   currentUser: null,
@@ -22,23 +27,23 @@ const cloud = {
    * @returns Promise<user>
    */
   register: (name, email, pass) => {
-    return SDK.account.create(email, pass, name);
+    return account.create(ID.unique(), email, pass, name);
   },
   /**
    * Send verify email to user.
    * @returns Promise<response>
    */
   createConfirmation: () => {
-    return SDK.account.createVerification(APP_EXT_HOST + "#/verify-account");
+    return account.createVerification(APP_EXT_HOST + "#/verify-account");
   },
   /**
    * Checks if user is logged in.
    * @returns Promise<boolean>
    */
   isUserLoggedIn: async () => {
-    return SDK.account.get().then(account => {
-      cloud.currentUser = account.$id;
-      return account;
+    return account.get().then(user => {
+      cloud.currentUser = user.$id;
+      return user;
     });
   },
   /**
@@ -46,7 +51,7 @@ const cloud = {
    * @returns Promise<boolean>
    */
   getUser: () => {
-    return SDK.account.get();
+    return account.get();
   },
   /**
    * Send password recovery email.
@@ -54,7 +59,7 @@ const cloud = {
    * @returns Promise<repsonse>
    */
   recoverPassword: mail => {
-    return SDK.account.createRecovery(mail, APP_EXT_HOST + "#/reset-password");
+    return account.createRecovery(mail, APP_EXT_HOST + "#/reset-password");
   },
   /**
    * Confirm and change password from recovery.
@@ -64,7 +69,7 @@ const cloud = {
    * @returns Promise<response>
    */
   confirmPassword: (user, secret, password) => {
-    return SDK.account.updateRecovery(user, secret, password, password);
+    return account.updateRecovery(user, secret, password);
   },
   /**
    * Verify account.
@@ -73,7 +78,7 @@ const cloud = {
    * @returns Promise<response>
    */
   confirm: (id, token) => {
-    return SDK.account.updateVerification(id, token);
+    return account.updateVerification(id, token);
   },
   /**
    * Login user and sets user ID in state.
@@ -82,7 +87,7 @@ const cloud = {
    * @returns Promise<session>
    */
   login: (user, pass) => {
-    return SDK.account.createSession(user, pass);
+    return account.createEmailPasswordSession(user, pass);
   },
   /**
    * Logs out session form user.
@@ -90,7 +95,7 @@ const cloud = {
    * @returns Promise<response>
    */
   logoutSession: id => {
-    return SDK.account.deleteSession(id);
+    return account.deleteSession(id);
   },
   /**
    * @param {string} id Backup ID
@@ -98,8 +103,8 @@ const cloud = {
    * Set Cloud Timestamp from specific file
    */
   setCloudTimestamp: id => {
-    return SDK.storage.getFile(id).then(response => {
-      state.updateCloudTimestamp(response.dateCreated);
+    return storage.getFile(APP_BUCKET_ID, id).then(response => {
+      state.updateCloudTimestamp(new Date(response.$createdAt).getTime() / 1000);
     });
   },
   /**
@@ -124,14 +129,14 @@ const cloud = {
       type: "application/json",
     });
 
-    return SDK.storage
+    return storage
       .createFile(
-        new File([blob], `user:${cloud.currentUser}.json`),
-        [`user:${cloud.currentUser}`],
-        [`user:${cloud.currentUser}`]
+        APP_BUCKET_ID,
+        ID.unique(),
+        new File([blob], `user:${cloud.currentUser}.json`)
       )
       .then(response => {
-        state.updateCloudTimestamp(response.dateCreated);
+        state.updateCloudTimestamp(new Date(response.$createdAt).getTime() / 1000);
         return response;
       });
   },
@@ -139,58 +144,57 @@ const cloud = {
    * Get Security log from account.
    */
   getSecurityLog: () => {
-    return SDK.account.getLogs();
+    return account.listLogs();
   },
   /**
    * Get Sessions from account.
    */
   getSessions: () => {
-    return SDK.account.getSessions();
+    return account.listSessions();
   },
   /**
    * Restore from a backup.
    * @param {string} id Backup ID
    * @returns Promise<response>
    */
-  restoreBackup: id => {
-    const cookieFallback = localStorage.getItem("cookieFallback") || false;
-    return fetch(SDK.storage.getFileView(id), {
+  restoreBackup: async id => {
+    const fileUrl = storage.getFileView(APP_BUCKET_ID, id);
+    const response = await fetch(fileUrl, {
       method: "GET",
       credentials: "include",
       mode: "cors",
-      headers: {
-        ...(cookieFallback && { "X-Fallback-Cookies": cookieFallback }),
-      },
-    })
-      .then(response => {
-        if (!response.ok) throw new Error("Something went wrong");
-        return response.json();
-      })
-      .then(response => {
-        const data = response;
-        const dataObject = Object.keys(data);
-        return new Promise(resolve => {
-          dataObject.forEach(k => localStorage.setItem(k, data[k]));
-          cloud.setCloudTimestamp(id).then(() => resolve(true));
-        });
-      });
+    });
+    if (!response.ok) throw new Error("Something went wrong");
+    const data = await response.json();
+    const dataObject = Object.keys(data);
+    dataObject.forEach(k => localStorage.setItem(k, data[k]));
+    await cloud.setCloudTimestamp(id);
+    return true;
   },
   /**
    * Get all backups.
    */
   getAllBackups: () => {
-    return SDK.storage.listFiles(
-      "user:" + cloud.currentUser + ".json",
-      25,
-      0,
-      "DESC"
+    return storage.listFiles(
+      APP_BUCKET_ID,
+      [
+        Query.limit(25),
+        Query.orderDesc("$createdAt"),
+        Query.search("name", `user:${cloud.currentUser}.json`)
+      ]
     );
   },
   /**
    * Get latest backup.
    */
   getLatestBackup: () => {
-    return SDK.storage.listFiles("", 1, 0, "DESC");
+    return storage.listFiles(
+      APP_BUCKET_ID,
+      [
+        Query.limit(1),
+        Query.orderDesc("$createdAt")
+      ]
+    );
   },
   /**
    * Update e-mail.
@@ -199,7 +203,7 @@ const cloud = {
    * @returns Promise<response>
    */
   updateEmail: (mail, pass) => {
-    return SDK.account.updateEmail(mail, pass);
+    return account.updateEmail(mail, pass);
   },
   /**
    * Update name.
@@ -207,7 +211,7 @@ const cloud = {
    * @returns Promise<response>
    */
   updateName: name => {
-    return SDK.account.updateName(name);
+    return account.updateName(name);
   },
   /**
    * Update password.
@@ -216,7 +220,7 @@ const cloud = {
    * @returns Promise<response>
    */
   updatePassword: (pass, old) => {
-    return SDK.account.updatePassword(pass, old);
+    return account.updatePassword(pass, old);
   },
 };
 

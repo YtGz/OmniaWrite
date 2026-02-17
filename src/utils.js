@@ -1,5 +1,9 @@
 import { formatDistanceToNow, format, fromUnixTime } from "date-fns";
-import { es, enUS as en, pt, ru, de } from "date-fns/locale";
+import { es } from "date-fns/locale/es";
+import { enUS as en } from "date-fns/locale/en-US";
+import { pt } from "date-fns/locale/pt";
+import { ru } from "date-fns/locale/ru";
+import { de } from "date-fns/locale/de";
 import { settings } from "./stores";
 import { get } from "svelte/store";
 

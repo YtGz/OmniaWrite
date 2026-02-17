@@ -17,7 +17,8 @@
 
     if (latest.files.length === 0) return;
 
-    show = $state.lastCloudSave < latest.files[0].dateCreated;
+    const latestTimestamp = new Date(latest.files[0].$createdAt).getTime() / 1000;
+    show = $state.lastCloudSave < latestTimestamp;
   });
 
   const download = () => {
@@ -41,6 +42,8 @@
       f = Math.floor(Math.log(a) / Math.log(c));
     return parseFloat((a / Math.pow(c, f)).toFixed(d)) + " " + e[f];
   };
+
+  const getTimestamp = file => new Date(file.$createdAt).getTime() / 1000;
 </script>
 
 <Modal bind:show>
@@ -54,7 +57,7 @@
     <ul>
       <li on:click={download}>
         <span class="from-now">
-          {formatDistance(latest.files[0].dateCreated)}
+          {formatDistance(getTimestamp(latest.files[0]))}
         </span>
         <span class="file-size">
           {formatBytes(latest.files[0].sizeOriginal)}

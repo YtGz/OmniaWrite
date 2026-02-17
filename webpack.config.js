@@ -19,7 +19,8 @@ module.exports = {
       svelte: path.resolve("node_modules", "svelte")
     },
     extensions: [".mjs", ".js", ".svelte"],
-    mainFields: ["svelte", "browser", "module", "main"]
+    mainFields: ["svelte", "browser", "module", "main"],
+    conditionNames: ["svelte", "browser", "import"]
   },
   output: {
     path: __dirname + "/public",
@@ -35,18 +36,28 @@ module.exports = {
           options: {
             emitCss: true,
             hotReload: true,
+            compilerOptions: {
+              dev: !prod
+            },
             preprocess: require("svelte-preprocess")()
           }
+        }
+      },
+      {
+        // Required to prevent errors from Svelte on Webpack 5+
+        test: /node_modules\/svelte\/.*\.mjs$/,
+        resolve: {
+          fullySpecified: false
         }
       },
       {
         test: /\.(sa|sc|c)ss$/,
         use: [
           // Creates `style` nodes from JS strings
-					/**
-					 * MiniCssExtractPlugin doesn't support HMR.
-					 * For developing, use 'style-loader' instead.
-					 * */
+          /**
+           * MiniCssExtractPlugin doesn't support HMR.
+           * For developing, use 'style-loader' instead.
+           * */
           prod ? MiniCssExtractPlugin.loader : "style-loader",
           "css-loader",
           "sass-loader"
@@ -54,15 +65,10 @@ module.exports = {
       },
       {
         test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
-        use: [
-          {
-            loader: "file-loader",
-            options: {
-              name: "[name].[ext]",
-              outputPath: "fonts/"
-            }
-          }
-        ]
+        type: "asset/resource",
+        generator: {
+          filename: "fonts/[name][ext]"
+        }
       }
     ]
   },
@@ -74,11 +80,9 @@ module.exports = {
     new workboxPlugin.GenerateSW(workboxConfig),
     new webpack.DefinePlugin({
       "process.env.APPWRITE_ENDPOINT": JSON.stringify(process.env.APPWRITE_ENDPOINT || "https://appwrite.datawarp.dev/v1"),
-      "process.env.APPWRITE_PROJECT": JSON.stringify(process.env.APPWRITE_PROJECT || "")
+      "process.env.APPWRITE_PROJECT": JSON.stringify(process.env.APPWRITE_PROJECT || ""),
+      "process.env.APPWRITE_BUCKET_ID": JSON.stringify(process.env.APPWRITE_BUCKET_ID || "backups")
     })
   ],
-  node: {
-    fs: "empty"
-  },
   devtool: prod ? false : "source-map"
 };
