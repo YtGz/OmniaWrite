@@ -1,14 +1,11 @@
 <script>
-  export let id;
-  export let label;
-
-  export let helper;
+  let { id, label, helper, children } = $props();
 </script>
 
 <div class="field">
   {#if label}<label for={id}>{label}</label>{/if}
   <div>
-    <slot />
+    {@render children?.()}
     {#if helper}<small>{helper}</small>{/if}
   </div>
 </div>

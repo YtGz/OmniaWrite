@@ -2,15 +2,10 @@
   import { getRandomNumber } from "../../utils";
   import { Field } from ".";
 
-  export let label;
-  export let id = label + getRandomNumber();
-
-  export let value;
-  export let options = [];
-  export let helper;
+  let { label, id = label + getRandomNumber(), value = $bindable(), options = [], helper } = $props();
 </script>
 
-<Field bind:id bind:label bind:helper>
+<Field {id} {label} {helper}>
   <select {id} bind:value>
     {#each options as option}
       <option value={option.value}>{option.text}</option>

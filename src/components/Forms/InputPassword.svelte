@@ -2,13 +2,7 @@
   import { getRandomNumber } from "../../utils";
   import { Field } from ".";
 
-  export let label;
-  export let id = label + getRandomNumber();
-
-  export let value;
-  export let placeholder;
-  export let autocomplete = "off";
-  export let required = false;
+  let { label, id = label + getRandomNumber(), value = $bindable(""), placeholder, autocomplete = "off", required = false } = $props();
 
   const regexMedium = RegExp(
     "^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})"
@@ -17,11 +11,11 @@
     "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})"
   );
 
-  $: passwordIsMedium = regexMedium.test(value);
-  $: passwordIsStrong = regexStrong.test(value);
+  let passwordIsMedium = $derived(regexMedium.test(value));
+  let passwordIsStrong = $derived(regexStrong.test(value));
 </script>
 
-<Field bind:id bind:label>
+<Field {id} {label}>
   <input
     class:weak={value.length > 0 && !passwordIsMedium}
     class:medium={value.length > 0 && passwordIsMedium && !passwordIsStrong}

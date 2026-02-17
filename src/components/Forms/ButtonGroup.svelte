@@ -1,9 +1,9 @@
 <script>
-  export let small;
+  let { small, children } = $props();
 </script>
 
 <div class="button-group" class:small>
-  <slot />
+  {@render children?.()}
 </div>
 
 <style lang="scss">

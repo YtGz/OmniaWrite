@@ -1,3 +1,4 @@
+import { mount } from "svelte";
 import { register, init } from "svelte-i18n";
 import pkg from "../package.json";
 
@@ -26,7 +27,7 @@ init({
   initialLocale: JSON.parse(localStorage.getItem("settings")).language || "en",
 });
 
-const app = new App({
+const app = mount(App, {
   target: document.body,
   props: {
     version: pkg.version,

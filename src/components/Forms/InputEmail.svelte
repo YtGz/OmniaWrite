@@ -2,17 +2,10 @@
   import { getRandomNumber } from "../../utils";
   import { Field } from ".";
 
-  export let label;
-  export let id = label + getRandomNumber();
-
-  export let value;
-  export let placeholder;
-  export let helper;
-  export let autocomplete = "off";
-  export let required = false;
+  let { label, id = label + getRandomNumber(), value = $bindable(), placeholder, helper, autocomplete = "off", required = false } = $props();
 </script>
 
-<Field bind:id bind:label bind:helper>
+<Field {id} {label} {helper}>
   <input {id} {autocomplete} {placeholder} {required} type="email" bind:value />
 </Field>
 

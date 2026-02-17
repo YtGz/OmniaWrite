@@ -1,7 +1,5 @@
 <script>
-  export let color;
-  export let loading = false;
-  export let disabled = false;
+  let { color, loading = false, disabled = false, onclick, children } = $props();
 </script>
 
 <button
@@ -10,9 +8,9 @@
   class:green={color == 'green'}
   class:red={color == 'red'}
   class:outline={color == 'outline'}
-  on:click|preventDefault>
-  {#if loading}<span class="lnr lnr-sync spinner" />{/if}
-  <slot />
+  onclick={(e) => { e.preventDefault(); onclick?.(e); }}>
+  {#if loading}<span class="lnr lnr-sync spinner"></span>{/if}
+  {@render children?.()}
 </button>
 
 <style lang="scss">

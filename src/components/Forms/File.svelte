@@ -2,16 +2,10 @@
   import { getRandomNumber } from "../../utils";
   import { Field } from ".";
 
-  export let label;
-  export let id = label + getRandomNumber();
-
-  export let files;
-
-  export let helper;
-  export let required = false;
+  let { label, id = label + getRandomNumber(), files = $bindable(), helper, required = false } = $props();
 </script>
 
-<Field bind:id bind:label bind:helper>
+<Field {id} {label} {helper}>
   <input {id} {required} type="file" bind:files />
 </Field>
 

@@ -2,16 +2,12 @@
   import { getRandomNumber } from "../../utils";
   import { Field } from ".";
 
-  export let label;
-  export let id = label + getRandomNumber();
-
-  export let value;
-  export let helper;
+  let { label, id = label + getRandomNumber(), value = $bindable(), helper } = $props();
 </script>
 
-<Field bind:id bind:label bind:helper>
+<Field {id} {label} {helper}>
   <input {id} type="checkbox" bind:checked={value} />
-  <label for={id} />
+  <label for={id}></label>
 </Field>
 
 <style lang="scss">

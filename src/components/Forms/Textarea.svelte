@@ -2,15 +2,11 @@
   import { getRandomNumber } from "../../utils";
   import { Field } from ".";
 
-  export let label;
-  export let id = label + getRandomNumber();
-
-  export let value;
-  export let helper;
+  let { label, id = label + getRandomNumber(), value = $bindable(), helper } = $props();
 </script>
 
-<Field bind:id bind:label bind:helper>
-  <textarea {id} rows="10" bind:value />
+<Field {id} {label} {helper}>
+  <textarea {id} rows="10" bind:value></textarea>
 </Field>
 
 <style lang="scss">
