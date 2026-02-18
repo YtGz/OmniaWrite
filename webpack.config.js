@@ -31,7 +31,7 @@ module.exports = {
       "svelte/legacy": path.resolve("node_modules", "svelte/src/legacy/legacy-client.js"),
       svelte: path.resolve("node_modules", "svelte/src/index-client.js")
     },
-    extensions: [".mjs", ".js", ".svelte"],
+    extensions: [".mjs", ".js", ".ts", ".svelte"],
     mainFields: ["svelte", "browser", "module", "main"],
     conditionNames: ["svelte", "browser", "import"]
   },
@@ -42,6 +42,14 @@ module.exports = {
   },
   module: {
     rules: [
+      {
+        test: /\.ts$/,
+        include: /node_modules\/@keenmate\/svelte-spa-router/,
+        use: {
+          loader: "esbuild-loader",
+          options: { loader: "ts" }
+        }
+      },
       {
         test: /\.svelte$/,
         use: {
@@ -59,6 +67,12 @@ module.exports = {
       {
         // Required to prevent errors from Svelte on Webpack 5+
         test: /node_modules\/svelte\/.*\.mjs$/,
+        resolve: {
+          fullySpecified: false
+        }
+      },
+      {
+        test: /node_modules\/@keenmate\/svelte-spa-router\/.*\.js$/,
         resolve: {
           fullySpecified: false
         }

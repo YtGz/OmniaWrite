@@ -1,7 +1,7 @@
 <script>
   import { fade } from "svelte/transition";
   import { _, locales } from "svelte-i18n";
-  import { push } from "svelte-spa-router";
+  import { push } from "@keenmate/svelte-spa-router";
   import { settings } from "../stores";
   import { Select, Checkbox, Range } from "../components/Forms";
   import OmniaEditor from "omnia-editor";

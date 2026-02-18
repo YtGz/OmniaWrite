@@ -1,6 +1,6 @@
 <script>
   import { fly } from "svelte/transition";
-  import { link } from "svelte-spa-router";
+  import { link } from "@keenmate/svelte-spa-router";
   import {
     closeWindow,
     resizeWindow,
@@ -10,7 +10,7 @@
   import { state, ui } from "../stores";
   import { _ } from "svelte-i18n";
 
-  import active from "svelte-spa-router/active";
+  import { active } from "@keenmate/svelte-spa-router/active";
 
   import cloud from "../appwrite";
   import Toast from "./Toast.svelte";

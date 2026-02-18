@@ -1,5 +1,5 @@
 <script>
-  import { push } from "svelte-spa-router";
+  import { push } from "@keenmate/svelte-spa-router";
   import { fade } from "svelte/transition";
   import { _ } from "svelte-i18n";
   import cloud from "../../appwrite";

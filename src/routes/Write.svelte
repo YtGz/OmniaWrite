@@ -2,7 +2,7 @@
   import { onMount, onDestroy } from "svelte";
   import { fade } from "svelte/transition";
   import { scenes, chapters, cards, state, settings, ui } from "../stores";
-  import { push } from "svelte-spa-router";
+  import { push } from "@keenmate/svelte-spa-router";
   import { _ } from "svelte-i18n";
   import OmniaEditor from "omnia-editor";
   import tippy from "sveltejs-tippy";
@@ -10,7 +10,7 @@
   import Placeholder from "../shared/Placeholder.svelte";
   import Modal from "../shared/Modal.svelte";
 
-  let { params = {} } = $props();
+  let { routeParams = {} } = $props();
   let editor = $state();
   let editorStatus = $state(0);
   let currentHistory = $state(0);
@@ -30,11 +30,11 @@
     },
   };
 
-  let currentScene = $derived($scenes.find(scene => scene.id == params.sceneId));
+  let currentScene = $derived($scenes.find(scene => scene.id == routeParams.sceneId));
 
   $effect(() => {
     state.setCurrentTitle(
-      params.sceneId ? currentScene.title : "No scene selected!"
+      routeParams.sceneId ? currentScene.title : "No scene selected!"
     );
   });
 
@@ -58,7 +58,7 @@
   };
 
   const change = e => {
-    scenes.setSceneContent(params.sceneId, e.detail);
+    scenes.setSceneContent(routeParams.sceneId, e.detail);
     editorStatus = 2;
     filteredCards = $cards
       .filter(e => e.showTooltip && e.project == $state.currentProject)
@@ -96,7 +96,7 @@
 
 <div in:fade={{ duration: 100 }}>
   {#if $state.currentProject}
-    {#if params.sceneId !== null}
+    {#if routeParams.sceneId !== null}
       <Modal bind:show={showCards}>
         {#snippet header()}<h2>{$_('write.toolbar.cards')}</h2>{/snippet}
         {#each filteredCards as card}

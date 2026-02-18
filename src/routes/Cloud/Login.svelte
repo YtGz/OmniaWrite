@@ -1,7 +1,7 @@
 <script>
   import { fade } from "svelte/transition";
   import { _ } from "svelte-i18n";
-  import { push } from "svelte-spa-router";
+  import { push } from "@keenmate/svelte-spa-router";
   import { reloadWindow } from "../../bridge";
   import { state } from "../../stores";
 

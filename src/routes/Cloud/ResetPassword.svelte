@@ -1,6 +1,6 @@
 <script>
   import { _ } from "svelte-i18n";
-  import { push } from "svelte-spa-router";
+  import { push } from "@keenmate/svelte-spa-router";
   import cloud from "../../appwrite";
 
   import { InputEmail, ButtonGroup, Button } from "../../components/Forms";

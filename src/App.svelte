@@ -1,7 +1,7 @@
 <script>
   import { onMount } from "svelte";
   import { isLoading, locale, _ } from "svelte-i18n";
-  import Router, { location, replace } from "svelte-spa-router";
+  import Router, { location, replace } from "@keenmate/svelte-spa-router";
   import { Workbox } from "workbox-window";
   import {
     reloadWindow,
@@ -127,9 +127,10 @@
       showChangelog = true;
       $intern.version = version;
     }
-    location.subscribe(currentLocation => {
-      state.setCurrentLocation(currentLocation);
-    });
+  });
+
+  $effect(() => {
+    state.setCurrentLocation(location());
   });
 
   /**
@@ -173,7 +174,7 @@
         onclick={updateApp}
         duration="forever" />
       <div class="inner">
-        <Router {routes} on:routeLoaded={routeLoaded} />
+        <Router {routes} onRouteLoaded={routeLoaded} />
       </div>
     </div>
   </div>

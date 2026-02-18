@@ -2,9 +2,9 @@
   import { onMount } from "svelte";
   import { fade } from "svelte/transition";
   import { _ } from "svelte-i18n";
-  import { push, location } from "svelte-spa-router";
+  import { push, location } from "@keenmate/svelte-spa-router";
   import { Grid, GridElement } from "../components/Grid";
-  import Router from "svelte-spa-router";
+  import Router from "@keenmate/svelte-spa-router";
   import cloud from "../appwrite";
   import Toast from "../shared/Toast.svelte";
   import Spinner from "../shared/Spinner.svelte";
@@ -78,7 +78,7 @@
         </Grid>
       {:else}
         <Grid>
-          {#if $location === '/cloud'}
+          {#if location() === '/cloud'}
             <GridElement onclick={() => push('/cloud/backups')}>
               <h2>{$_('cloud.backups.title')}</h2>
             </GridElement>

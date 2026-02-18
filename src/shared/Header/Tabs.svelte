@@ -1,12 +1,12 @@
 <script>
   import { get } from "svelte/store";
-  import { link, location } from "svelte-spa-router";
-  import active from "svelte-spa-router/active";
+  import { link, location } from "@keenmate/svelte-spa-router";
+  import { active } from "@keenmate/svelte-spa-router/active";
 
   import { state, tabs, scenes } from "../../stores";
 
   const createTab = () => {
-    tabs.createTab($state.currentProject, $location);
+    tabs.createTab($state.currentProject, location());
   };
 
   const getTitle = location => {
@@ -31,7 +31,7 @@
           onclick={() => tabs.removeTab(tab.id)}></span>
       </li>
     {/each}
-    {#if $location != '/write/' && $location.includes('write') && !$tabs.some(tab => tab.link == $location)}
+    {#if location() != '/write/' && location().includes('write') && !$tabs.some(tab => tab.link == location())}
       <li class="tab new" onclick={createTab}>
         <span class="lnr lnr-plus-circle"></span>
       </li>

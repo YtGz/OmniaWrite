@@ -1,7 +1,7 @@
 <script>
   import { fade } from "svelte/transition";
   import { state, chapters, scenes } from "../../stores";
-  import { push } from "svelte-spa-router";
+  import { push } from "@keenmate/svelte-spa-router";
   import { _ } from "svelte-i18n";
   import { Grid, GridElement } from "../../components/Grid";
 
