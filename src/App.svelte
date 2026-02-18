@@ -31,7 +31,7 @@
 
   locale.set($settings.language);
 
-  export let version;
+  let { version } = $props();
   console.log(`Version: ${version}`);
 
   const routes = {
@@ -53,8 +53,8 @@
   };
 
   const wb = new Workbox("./service-worker.js");
-  let updateAvailable = false;
-  let showChangelog = false;
+  let updateAvailable = $state(false);
+  let showChangelog = $state(false);
 
   /**
    * Register Service Worker.
@@ -87,9 +87,9 @@
    * Defines state of sidebar and navigation based on max-width.
    */
   let mql = window.matchMedia("(max-width: 959px)");
-  let sidebarState = mql.matches ? false : true;
-  let navigationState = mql.matches ? false : true;
-  mql.addListener(e => {
+  let sidebarState = $state(mql.matches ? false : true);
+  let navigationState = $state(mql.matches ? false : true);
+  mql.addEventListener("change", e => {
     e.matches ? (navigationState = false) : (navigationState = true);
     e.matches ? (sidebarState = false) : (sidebarState = true);
   });
@@ -135,14 +135,14 @@
   /**
    * Listen for settings
    */
-  $: {
+  $effect(() => {
     document.body.className = $settings.theme;
     locale.set($settings.language);
     document.body.style.setProperty(
       "--editor-font-size",
       ($settings.fontsize === undefined ? 1 : $settings.fontsize) + "rem"
     );
-  }
+  });
 </script>
 
 {#if $isLoading}
@@ -164,13 +164,13 @@
     {/if}
     <HeaderComponent
       bind:navigationState
-      on:openSidebar={() => (sidebarState = true)} />
+      onopenSidebar={() => (sidebarState = true)} />
     <SidebarComponent bind:sidebarState />
     <div class="content" class:focus={$ui.focus}>
       <Toast
         bind:show={updateAvailable}
         text={$_('common.update-toast')}
-        on:click={updateApp}
+        onclick={updateApp}
         duration="forever" />
       <div class="inner">
         <Router {routes} on:routeLoaded={routeLoaded} />

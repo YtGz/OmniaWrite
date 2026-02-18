@@ -1,9 +1,9 @@
 <script>
-  export let columns = 2;
+  let { columns = 2, children } = $props();
 </script>
 
 <div class="grid" class:four={columns === 4} class:two={columns === 2}>
-  <slot />
+  {@render children?.()}
 </div>
 
 <style lang="scss">

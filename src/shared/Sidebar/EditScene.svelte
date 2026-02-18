@@ -5,8 +5,7 @@
   import { Input, ButtonGroup, Button } from "../../components/Forms";
   import Modal from "../../shared/Modal.svelte";
 
-  export let show;
-  export let data;
+  let { show = $bindable(), data = $bindable() } = $props();
 
   const editScene = () => {
     scenes.setSceneTitle(data.id, data.title);
@@ -24,8 +23,8 @@
 </script>
 
 <Modal bind:show>
-  <h2 slot="header">{$_('sidebar.editScene')}</h2>
-  <form on:submit|preventDefault={editScene}>
+  {#snippet header()}<h2>{$_('sidebar.editScene')}</h2>{/snippet}
+  <form onsubmit={(e) => { e.preventDefault(); editScene(); }}>
     <Input
       label={$_('sidebar.modal.title')}
       bind:value={data.title}
@@ -34,10 +33,10 @@
       placeholder={$_('placeholder.title')} />
 
     <ButtonGroup>
-      <Button on:click={editScene} disabled={data.title.length === 0}>
+      <Button onclick={editScene} disabled={data.title.length === 0}>
         {$_('sidebar.modal.edit.buttonSave')}
       </Button>
-      <Button on:click={() => removeScene(data.id)} color="red">
+      <Button onclick={() => removeScene(data.id)} color="red">
         {$_('sidebar.modal.edit.buttonDelete')}
       </Button>
     </ButtonGroup>

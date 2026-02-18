@@ -17,24 +17,25 @@
     Button,
   } from "../../components/Forms";
 
-  let showAlert = false;
-  let showAlertText;
-  let alertSuccess = false;
-  let alertDanger = false;
+  let showAlert = $state(false);
+  let showAlertText = $state();
+  let alertSuccess = $state(false);
+  let alertDanger = $state(false);
 
-  const form = {
+  let form = $state({
     name: "",
     email: "",
     pass: "",
     policy: false,
-  };
+  });
 
-  let showPrivacyPolicy;
+  let showPrivacyPolicy = $state(false);
 
-  let registerButtonLoading = false;
+  let registerButtonLoading = $state(false);
 
-  $: checkForm =
-    form.name !== "" && form.email !== "" && form.pass !== "" && form.policy;
+  let checkForm = $derived(
+    form.name !== "" && form.email !== "" && form.pass !== "" && form.policy
+  );
 
   const register = () => {
     registerButtonLoading = true;
@@ -66,7 +67,7 @@
 </script>
 
 <Modal bind:show={showPrivacyPolicy}>
-  <h2 slot="header">{$_('cloud.privacy.show')}</h2>
+  {#snippet header()}<h2>{$_('cloud.privacy.show')}</h2>{/snippet}
   <Policy />
 </Modal>
 
@@ -75,7 +76,7 @@
   <Alert danger={!alertSuccess} success={alertSuccess} bind:show={showAlert}>
     <span class="lnr success">{showAlertText}</span>
   </Alert>
-  <form on:submit|preventDefault={register}>
+  <form onsubmit={(e) => { e.preventDefault(); register(); }}>
     <Input
       label={$_('cloud.register.name')}
       placeholder="John Doe"
@@ -94,18 +95,18 @@
       helper={$_('install.disclaimer.action')} />
     <ButtonGroup>
       <Button
-        on:click={register}
+        onclick={register}
         loading={registerButtonLoading}
         disabled={!checkForm}>
         {$_('cloud.register.button')}
       </Button>
     </ButtonGroup>
-    <small class="link" on:click={() => (showPrivacyPolicy = true)}>
+    <small class="link" onclick={() => (showPrivacyPolicy = true)}>
       {$_('cloud.privacy.show')}
     </small>
     <h2>{$_('cloud.register.login')}</h2>
     <ButtonGroup>
-      <Button on:click={() => push('/cloud')}>{$_('cloud.login.title')}</Button>
+      <Button onclick={() => push('/cloud')}>{$_('cloud.login.title')}</Button>
     </ButtonGroup>
   </form>
 </div>

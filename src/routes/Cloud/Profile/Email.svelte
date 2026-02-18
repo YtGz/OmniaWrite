@@ -11,12 +11,12 @@
     Button,
   } from "../../../components/Forms";
 
-  export let email;
+  let { email = $bindable() } = $props();
 
-  let password = "";
-  let showToast = false;
-  let textToast = "";
-  let loading = false;
+  let password = $state("");
+  let showToast = $state(false);
+  let textToast = $state("");
+  let loading = $state(false);
 
   const updateEmail = () => {
     loading = true;
@@ -36,7 +36,7 @@
 
 <h2>{$_('cloud.profile.email.title')}</h2>
 
-<form on:submit|preventDefault={updateEmail}>
+<form onsubmit={(e) => { e.preventDefault(); updateEmail(); }}>
   <InputEmail
     label={$_('cloud.profile.email.fields.email')}
     placeholder="john.doe@email.tld"
@@ -46,7 +46,7 @@
     placeholder="******"
     bind:value={password} />
   <ButtonGroup>
-    <Button on:click={updateEmail} {loading}>
+    <Button onclick={updateEmail} {loading}>
       {$_('cloud.profile.action')}
     </Button>
   </ButtonGroup>

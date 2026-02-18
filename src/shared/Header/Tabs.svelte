@@ -28,12 +28,12 @@
         <a href={tab.link} use:link>{getTitle(tab.link)}</a>
         <span
           class="lnr lnr-cross tab-action"
-          on:click={() => tabs.removeTab(tab.id)} />
+          onclick={() => tabs.removeTab(tab.id)}></span>
       </li>
     {/each}
     {#if $location != '/write/' && $location.includes('write') && !$tabs.some(tab => tab.link == $location)}
-      <li class="tab new" on:click={createTab}>
-        <span class="lnr lnr-plus-circle" />
+      <li class="tab new" onclick={createTab}>
+        <span class="lnr lnr-plus-circle"></span>
       </li>
     {/if}
   </ul>

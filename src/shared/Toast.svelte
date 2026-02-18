@@ -1,31 +1,30 @@
 <script>
   import { fly } from "svelte/transition";
-  import { createEventDispatcher } from "svelte";
 
-  const dispatch = createEventDispatcher();
+  let {
+    show = $bindable(false),
+    text = "A notification message..",
+    duration = 5000,
+    onclick,
+    children
+  } = $props();
 
-  export let show = false;
-  export let text = "A notification message..";
-  export let duration = 5000;
-
-  $: {
+  $effect(() => {
     if (show && duration != "forever") {
       setTimeout(() => {
         show = false;
       }, duration);
     }
-  }
+  });
 </script>
 
 {#if show}
   <div
-    on:click={() => {
-      dispatch('click');
-    }}
+    {onclick}
     in:fly={{ y: -100, duration: 500 }}
     out:fly={{ x: 100, duration: 500 }}>
     {@html text}
-    <slot />
+    {@render children?.()}
   </div>
 {/if}
 

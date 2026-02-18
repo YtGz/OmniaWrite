@@ -5,11 +5,11 @@
 
   import { InputEmail, ButtonGroup, Button } from "../../components/Forms";
 
-  let email = "";
-  let recoverLoading = false;
-  let recoverState = false;
+  let email = $state("");
+  let recoverLoading = $state(false);
+  let recoverState = $state(false);
 
-  $: checkForm = email !== "";
+  let checkForm = $derived(email !== "");
 
   const recover = () => {
     recoverLoading = true;
@@ -27,16 +27,16 @@
 
 <h2>{$_('cloud.reset.title')}</h2>
 {#if recoverState}
-  <span class="lnr lnr-checkmark-circle" />
+  <span class="lnr lnr-checkmark-circle"></span>
   {$_('cloud.reset.success')}
 {:else}
-  <form on:submit|preventDefault={recover}>
+  <form onsubmit={(e) => { e.preventDefault(); recover(); }}>
     <InputEmail
       label={$_('cloud.login.email')}
       placeholder="john.doe@email.tld"
       bind:value={email} />
     <ButtonGroup>
-      <Button on:click={recover} loading={recoverLoading} disabled={!checkForm}>
+      <Button onclick={recover} loading={recoverLoading} disabled={!checkForm}>
         {$_('cloud.reset.button')}
       </Button>
     </ButtonGroup>
@@ -45,5 +45,5 @@
 
 <h2>{$_('cloud.reset.login')}</h2>
 <ButtonGroup>
-  <Button on:click={() => push('/cloud')}>{$_('cloud.login.title')}</Button>
+  <Button onclick={() => push('/cloud')}>{$_('cloud.login.title')}</Button>
 </ButtonGroup>

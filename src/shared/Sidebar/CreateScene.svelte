@@ -5,10 +5,9 @@
   import { Input, ButtonGroup, Button } from "../../components/Forms";
   import Modal from "../Modal.svelte";
 
-  export let show;
-  export let chapter;
+  let { show = $bindable(), chapter = $bindable() } = $props();
 
-  let title = "";
+  let title = $state("");
 
   const createScene = () => {
     const id = scenes.createScene(chapter, title);
@@ -19,8 +18,8 @@
 </script>
 
 <Modal bind:show>
-  <h2 slot="header">{$_('sidebar.modal.newScene.header')}</h2>
-  <form on:submit|preventDefault={createScene}>
+  {#snippet header()}<h2>{$_('sidebar.modal.newScene.header')}</h2>{/snippet}
+  <form onsubmit={(e) => { e.preventDefault(); createScene(); }}>
     <Input
       label={$_('sidebar.modal.title')}
       bind:value={title}
@@ -28,7 +27,7 @@
       autocomplete="off"
       placeholder={$_('placeholder.title')} />
     <ButtonGroup>
-      <Button on:click={createScene} disabled={title.length === 0}>
+      <Button onclick={createScene} disabled={title.length === 0}>
         {$_('sidebar.modal.newScene.button')}
       </Button>
     </ButtonGroup>

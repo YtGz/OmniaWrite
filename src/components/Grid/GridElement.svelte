@@ -1,13 +1,12 @@
 <script>
-  export let title;
-  export let action = false;
+  let { title, action = false, onclick, children } = $props();
 </script>
 
-<div class="grid-element" class:action on:click>
+<div class="grid-element" class:action {onclick}>
   {#if title}
     <h2>{title}</h2>
   {/if}
-  <slot />
+  {@render children?.()}
 </div>
 
 <style lang="scss">

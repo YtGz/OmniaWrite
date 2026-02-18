@@ -1,9 +1,9 @@
 <script>
-  export let label;
+  let { label, children } = $props();
 </script>
 
 <td data-th={label}>
-  <slot />
+  {@render children?.()}
 </td>
 
 <style lang="scss">

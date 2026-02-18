@@ -28,13 +28,13 @@
     "/logout": Logout,
   };
 
-  let loading = true;
+  let loading = $state(true);
 
-  let isUserLoggedIn = false;
-  let isUserVerified = false;
+  let isUserLoggedIn = $state(false);
+  let isUserVerified = $state(false);
 
-  let showToast = false;
-  let showToastText;
+  let showToast = $state(false);
+  let showToastText = $state();
 
   onMount(() => {
     checkLogin();
@@ -72,28 +72,28 @@
     {#if isUserLoggedIn}
       {#if !isUserVerified}
         <Grid>
-          <GridElement on:click={createConfirmation}>
+          <GridElement onclick={createConfirmation}>
             {$_('cloud.confirm.text')}
           </GridElement>
         </Grid>
       {:else}
         <Grid>
           {#if $location === '/cloud'}
-            <GridElement on:click={() => push('/cloud/backups')}>
+            <GridElement onclick={() => push('/cloud/backups')}>
               <h2>{$_('cloud.backups.title')}</h2>
             </GridElement>
-            <GridElement on:click={() => push('/cloud/security')}>
+            <GridElement onclick={() => push('/cloud/security')}>
               <h2>{$_('cloud.security.title')}</h2>
             </GridElement>
-            <GridElement on:click={() => push('/cloud/profile')}>
+            <GridElement onclick={() => push('/cloud/profile')}>
               <h2>{$_('cloud.profile.title')}</h2>
             </GridElement>
-            <GridElement on:click={() => push('/cloud/logout')}>
+            <GridElement onclick={() => push('/cloud/logout')}>
               <h2>{$_('cloud.logout.title')}</h2>
             </GridElement>
           {:else}
-            <GridElement on:click={() => push('/cloud')}>
-              <span class="lnr lnr-arrow-left" />
+            <GridElement onclick={() => push('/cloud')}>
+              <span class="lnr lnr-arrow-left"></span>
             </GridElement>
           {/if}
         </Grid>

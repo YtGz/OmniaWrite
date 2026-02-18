@@ -25,7 +25,7 @@
       <Heading>{$_('cloud.security.devices.ip')}</Heading>
     </Row>
     {#each devices.sessions as device}
-      <Row on:click={() => logoutSession(device.$id)}>
+      <Row onclick={() => logoutSession(device.$id)}>
         <Cell label="OS">{device.osName}</Cell>
         <Cell label="Country">{device.countryName}</Cell>
         <Cell label="IP">{device.ip}</Cell>

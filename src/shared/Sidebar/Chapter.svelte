@@ -1,34 +1,27 @@
 <script>
-  import { createEventDispatcher } from "svelte";
   import { _ } from "svelte-i18n";
   import { chapters } from "../../stores";
   import tippy from "sveltejs-tippy";
 
-  export let chapter;
-
-  const dispatch = createEventDispatcher();
-
-  const edit = () => {
-    dispatch("edit", chapter);
-  };
+  let { chapter, onedit, children } = $props();
 </script>
 
 <li class:open={chapter.ui.open}>
   <span
     class="key"
-    on:click|self={() => chapters.toggleChapterInSidebar(chapter.id)}>
+    onclick={(e) => { if (e.target === e.currentTarget) chapters.toggleChapterInSidebar(chapter.id); }}>
     {chapter.title}
     <span
       class="lnr lnr-chevron-up collapse"
-      on:click|self={() => chapters.toggleChapterInSidebar(chapter.id)} />
+      onclick={(e) => { if (e.target === e.currentTarget) chapters.toggleChapterInSidebar(chapter.id); }}></span>
     <span
       class="lnr lnr-cog action"
       use:tippy={{ content: $_('sidebar.editChapter'), placement: 'right' }}
-      on:click={edit} />
+      onclick={() => onedit?.(chapter)}></span>
   </span>
   {#if chapter.ui.open}
     <ul class="scenes">
-      <slot />
+      {@render children?.()}
     </ul>
   {/if}
 </li>

@@ -22,7 +22,7 @@
     return false;
   };
 
-  let show = !checkBrowser() && !isIgnoreSet();
+  let show = $state(!checkBrowser() && !isIgnoreSet());
 
   // Options for our Select Field.
   let options = [
@@ -53,7 +53,7 @@
   ];
 
   // Variable that stores the input of the Select field
-  let daysIgnored;
+  let daysIgnored = $state();
 
   /**
    * @name setIgnoreCookie
@@ -73,7 +73,7 @@
 </script>
 
 <Modal bind:show>
-  <h4 slot="header">Your Browser Choice</h4>
+  {#snippet header()}<h4>Your Browser Choice</h4>{/snippet}
   <p>
     We respect your Browser Choice. But we kindly request for you to use the
     desktop apps or use the Brave Browser.
@@ -84,13 +84,13 @@
     <a href="https://www.omniawrite.com/get-started/">Get Started</a>
     page of our website.
   </p>
-  <form on:submit|preventDefault={setIgnoreCookie}>
+  <form onsubmit={(e) => { e.preventDefault(); setIgnoreCookie(); }}>
     <Select
       label="Don't show this for:"
-      bind:options
+      {options}
       bind:value={daysIgnored} />
     <ButtonGroup>
-      <Button on:click={setIgnoreCookie}>Update</Button>
+      <Button onclick={setIgnoreCookie}>Update</Button>
     </ButtonGroup>
   </form>
 </Modal>

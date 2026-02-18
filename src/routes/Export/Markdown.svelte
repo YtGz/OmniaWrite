@@ -8,9 +8,9 @@
   import Done from "./Shared/Done.svelte";
   import Spinner from "../../shared/Spinner.svelte";
 
-  let done = false;
-  let progress = false;
-  let file;
+  let done = $state(false);
+  let progress = $state(false);
+  let file = $state();
 
   const download = async () => {
     progress = true;
@@ -31,7 +31,7 @@
   {:else}
     <p>{$_('export.markdown.explain')}</p>
     <ButtonGroup>
-      <Button on:click={download}>{$_('export.action.export')}</Button>
+      <Button onclick={download}>{$_('export.action.export')}</Button>
     </ButtonGroup>
   {/if}
 </div>

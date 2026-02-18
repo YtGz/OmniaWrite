@@ -4,9 +4,9 @@
   import { Input, Button, ButtonGroup } from "../../components/Forms";
   import Modal from "../Modal.svelte";
 
-  export let show;
+  let { show = $bindable() } = $props();
 
-  let title = "";
+  let title = $state("");
 
   const createChapter = () => {
     chapters.createChapter($state.currentProject, title);
@@ -16,8 +16,8 @@
 </script>
 
 <Modal bind:show>
-  <h2 slot="header">{$_('sidebar.modal.newChapter.header')}</h2>
-  <form on:submit|preventDefault={createChapter}>
+  {#snippet header()}<h2>{$_('sidebar.modal.newChapter.header')}</h2>{/snippet}
+  <form onsubmit={(e) => { e.preventDefault(); createChapter(); }}>
     <Input
       label={$_('sidebar.modal.title')}
       bind:value={title}
@@ -25,7 +25,7 @@
       autocomplete="off"
       placeholder={$_('placeholder.title')} />
     <ButtonGroup>
-      <Button on:click={createChapter} disabled={title.length === 0}>
+      <Button onclick={createChapter} disabled={title.length === 0}>
         {$_('sidebar.modal.newChapter.button')}
       </Button>
     </ButtonGroup>

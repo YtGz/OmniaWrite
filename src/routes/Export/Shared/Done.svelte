@@ -2,7 +2,7 @@
   import Download from "./Download.svelte";
   import Filesystem from "./Filesystem.svelte";
 
-  export let file;
+  let { file } = $props();
 </script>
 
 {#if file.type === 'download'}

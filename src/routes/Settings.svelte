@@ -23,7 +23,7 @@
     ],
   };
 
-  $: themes = [
+  let themes = $derived([
     {
       value: "dark",
       text: $_("settings.appereance.theme.dark"),
@@ -32,12 +32,12 @@
       value: "light",
       text: $_("settings.appereance.theme.light"),
     },
-  ];
+  ]);
 
-  $: languages = $locales.map(locale => ({
+  let languages = $derived($locales.map(locale => ({
     value: locale,
     text: $_(`settings.appereance.language.${locale}`),
-  }));
+  })));
 </script>
 
 <div class="settings" in:fade={{ duration: 100 }}>
@@ -80,15 +80,15 @@
     <OmniaEditor data={preview} active={false} />
   </div>
   <br />
-  <small class="link" on:click={() => push('/thirdparty')}>
+  <small class="link" onclick={() => push('/thirdparty')}>
     {$_('settings.thirdparty')}
   </small>
   |
-  <small class="link" on:click={() => push('/policy')}>
+  <small class="link" onclick={() => push('/policy')}>
     {$_('cloud.privacy.show')}
   </small>
   |
-  <small class="link" on:click={() => push('/disclaimer')}>
+  <small class="link" onclick={() => push('/disclaimer')}>
     {$_('install.disclaimer.show')}
   </small>
 </div>

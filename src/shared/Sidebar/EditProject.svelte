@@ -8,18 +8,17 @@
 
   import Modal from "../../shared/Modal.svelte";
 
-  export let show = false;
-  export let id;
+  let { show = $bindable(false), id } = $props();
 
-  let form = {
+  let form = $state({
     title: "",
     author: "",
     description: "",
     publisher: "",
     language: "",
-  };
+  });
 
-  $: checkForm = form.title !== "";
+  let checkForm = $derived(form.title !== "");
 
   onMount(() => {
     form = get(projects).filter(project => project.id == id)[0];
@@ -58,8 +57,8 @@
 </script>
 
 <Modal bind:show>
-  <h2 slot="header">{$_('sidebar.editProject')}</h2>
-  <form on:submit|preventDefault={save}>
+  {#snippet header()}<h2>{$_('sidebar.editProject')}</h2>{/snippet}
+  <form onsubmit={(e) => { e.preventDefault(); save(); }}>
     <Input
       label={$_('export.title')}
       bind:value={form.title}
@@ -89,10 +88,10 @@
       bind:value={form.description}
       helper={$_('export.helpers.description')} />
     <ButtonGroup>
-      <Button on:click={() => save()} disabled={!checkForm}>
+      <Button onclick={() => save()} disabled={!checkForm}>
         {$_('overview.project.save')}
       </Button>
-      <Button on:click={() => removeProject(id)} color="red">
+      <Button onclick={() => removeProject(id)} color="red">
         {$_('overview.project.delete')}
       </Button>
     </ButtonGroup>

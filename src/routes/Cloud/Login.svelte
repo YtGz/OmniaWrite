@@ -15,17 +15,17 @@
   import cloud from "../../appwrite";
   import Alert from "../../shared/Alert.svelte";
 
-  let showAlert = false;
-  let showAlertText;
+  let showAlert = $state(false);
+  let showAlertText = $state();
 
-  const form = {
+  let form = $state({
     email: "",
     pass: "",
-  };
+  });
 
-  $: checkForm = form.email !== "" && form.pass !== "";
+  let checkForm = $derived(form.email !== "" && form.pass !== "");
 
-  let loginButtonLoading = false;
+  let loginButtonLoading = $state(false);
 
   const login = () => {
     loginButtonLoading = true;
@@ -56,7 +56,7 @@
     <Alert danger bind:show={showAlert}>
       <span class="lnr lnr-warning">{showAlertText}</span>
     </Alert>
-    <form on:submit|preventDefault={login}>
+    <form onsubmit={(e) => { e.preventDefault(); login(); }}>
       <InputEmail
         label={$_('cloud.login.email')}
         placeholder="john.doe@email.tld"
@@ -67,19 +67,19 @@
         bind:value={form.pass} />
       <ButtonGroup>
         <Button
-          on:click={login}
+          onclick={login}
           loading={loginButtonLoading}
           disabled={!checkForm}>
           {$_('cloud.login.button')}
         </Button>
       </ButtonGroup>
     </form>
-    <small class="link" on:click={() => push('/cloud/reset-password')}>
+    <small class="link" onclick={() => push('/cloud/reset-password')}>
       {$_('cloud.reset.title')}
     </small>
     <h2>{$_('cloud.login.register')}</h2>
     <ButtonGroup>
-      <Button on:click={() => push('/cloud/register')}>
+      <Button onclick={() => push('/cloud/register')}>
         {$_('cloud.register.title')}
       </Button>
     </ButtonGroup>

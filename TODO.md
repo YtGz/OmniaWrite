@@ -16,48 +16,83 @@
   - [x] Search.svelte
   - [x] Select.svelte
   - [x] Textarea.svelte
-
-## In Progress
-
-- [ ] Migrate remaining components to Svelte 5 runes
-
-## Remaining Components
+- [x] Migrate remaining components to Svelte 5 runes
 
 ### src/components/
-- [ ] Grid/Grid.svelte
-- [ ] Grid/GridElement.svelte
-- [ ] List.svelte
-- [ ] ListElement.svelte
-- [ ] Table/Cell.svelte
-- [ ] Table/Heading.svelte
-- [ ] Table/Row.svelte
-- [ ] Table/Table.svelte
+- [x] Grid/Grid.svelte
+- [x] Grid/GridElement.svelte
+- [x] List.svelte
+- [x] Table/Cell.svelte
+- [x] Table/Heading.svelte
+- [x] Table/Row.svelte
+- [x] Table/Table.svelte
 
 ### src/shared/
-- [ ] Header.svelte
-- [ ] Sidebar.svelte
-- [ ] Sidebar/*.svelte (multiple files)
-- [ ] Modal.svelte
-- [ ] Toast.svelte
-- [ ] Spinner.svelte
-- [ ] Support.svelte
-- [ ] Install.svelte
-- [ ] NewBackup.svelte
-- [ ] NewUpdate.svelte
-- [ ] ThirdParty.svelte
-- [ ] Disclaimer.svelte
-- [ ] BrowserSupport.svelte
-- [ ] Placeholder.svelte
+- [x] Alert.svelte
+- [x] BrowserSupport.svelte
+- [x] Disclaimer.svelte (no changes needed)
+- [x] Header.svelte
+- [x] Header/Tabs.svelte
+- [x] Install.svelte
+- [x] Modal.svelte
+- [x] NewBackup.svelte
+- [x] NewUpdate.svelte
+- [x] Placeholder.svelte
+- [x] Sidebar.svelte
+- [x] Sidebar/Backdrop.svelte
+- [x] Sidebar/Chapter.svelte
+- [x] Sidebar/Close.svelte
+- [x] Sidebar/CreateChapter.svelte
+- [x] Sidebar/CreateScene.svelte
+- [x] Sidebar/EditChapter.svelte
+- [x] Sidebar/EditProject.svelte
+- [x] Sidebar/EditScene.svelte
+- [x] Sidebar/ReArrange.svelte
+- [x] Sidebar/Scene.svelte
+- [x] Spinner.svelte
+- [x] Support.svelte
+- [x] ThirdParty.svelte (no changes needed)
+- [x] Toast.svelte
 
 ### src/routes/
-- [ ] Overview.svelte
-- [ ] Write.svelte
-- [ ] Cards.svelte
-- [ ] Settings.svelte
-- [ ] Cloud.svelte
-- [ ] Cloud/*.svelte (multiple files)
-- [ ] Export.svelte
-- [ ] Export/*.svelte (multiple files)
+- [x] App.svelte
+- [x] Cards.svelte
+- [x] Cloud.svelte
+- [x] Cloud/Backups.svelte
+- [x] Cloud/Login.svelte
+- [x] Cloud/Logout.svelte (no changes needed)
+- [x] Cloud/Policy.svelte (no changes needed)
+- [x] Cloud/Profile.svelte (no changes needed)
+- [x] Cloud/Profile/Email.svelte
+- [x] Cloud/Profile/Name.svelte
+- [x] Cloud/Profile/Password.svelte
+- [x] Cloud/Register.svelte
+- [x] Cloud/ResetPassword.svelte
+- [x] Cloud/Security.svelte
+- [x] Export.svelte
+- [x] Export/Cloud.svelte
+- [x] Export/Markdown.svelte
+- [x] Export/RTF.svelte
+- [x] Export/Shared/Done.svelte
+- [x] Export/Shared/Download.svelte
+- [x] Export/Shared/Filesystem.svelte
+- [x] Overview.svelte
+- [x] Overview/CreateProject.svelte
+- [x] Overview/Project.svelte (no changes needed)
+- [x] Settings.svelte
+- [x] Write.svelte
+- [x] Write/Overview.svelte
+
+### Test infrastructure
+- [x] Update jest.config.js for Svelte 5 ESM compatibility
+- [x] Update Button.test.js to use Svelte 5 patterns (remove svelte-htm dependency)
+
+## Known Issues
+
+- `svelte-jester` does not support Svelte 5 (requires CJS mode). Tests need migration to Vitest.
+- `svelte-htm` is incompatible with Svelte 5 (depends on removed `svelte/internal`).
+- `omnia-editor` still uses Svelte 3/4 event syntax (`on:init`, `on:input`, `on:change`) - works via Svelte compatibility mode.
+- `svelte-spa-router` still uses Svelte 3/4 event syntax (`on:routeLoaded`) - works via Svelte compatibility mode.
 
 ## Migration Patterns
 
@@ -135,3 +170,4 @@ let { children, header } = $props();
 - The webpack config has been updated with Svelte 5 subpath aliases
 - `onMount`, `onDestroy` lifecycle hooks still work in Svelte 5
 - Stores (`writable`, `get`) still work - no migration needed for stores.js
+- `mql.addListener` replaced with `mql.addEventListener("change", ...)` (deprecated API)

@@ -17,7 +17,7 @@
     console.info("Prevent duplicate mounting.")
   }
 
-  export let show;
+  let { show = $bindable() } = $props();
 
   let orderChapter;
 
@@ -80,7 +80,7 @@
 </script>
 
 <Modal bind:show>
-  <h2 slot="header">{$_('sidebar.editOrder')}</h2>
+  {#snippet header()}<h2>{$_('sidebar.editOrder')}</h2>{/snippet}
   <ul id="order" class="chapters">
     {#each get(chapters)
       .filter(chapter => chapter.project == $state.currentProject)
@@ -98,7 +98,7 @@
     {/each}
   </ul>
   <ButtonGroup>
-    <Button on:click={save}>Save</Button>
+    <Button onclick={save}>Save</Button>
   </ButtonGroup>
 </Modal>
 

@@ -1,5 +1,9 @@
+<script>
+  let { children } = $props();
+</script>
+
 <table>
-  <slot />
+  {@render children?.()}
 </table>
 
 <style lang="scss">

@@ -1,6 +1,6 @@
 <script>
   import { _ } from "svelte-i18n";
-  export let uri;
+  let { uri } = $props();
 </script>
 
 <p><b>{$_('export.finished.savedTo')}</b></p>

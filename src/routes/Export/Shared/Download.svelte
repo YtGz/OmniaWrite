@@ -4,12 +4,12 @@
   import ButtonGroup from "../../../components/Forms/ButtonGroup.svelte";
   import Button from "../../../components/Forms/Button.svelte";
 
-  export let download;
+  let { download } = $props();
 </script>
 
 <ButtonGroup>
-  <Button on:click={download}>
-    <span class="lnr lnr-download" />
+  <Button onclick={download}>
+    <span class="lnr lnr-download"></span>
     {$_('export.finished.download')}
   </Button>
 </ButtonGroup>

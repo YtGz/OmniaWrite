@@ -20,7 +20,7 @@
   import Done from "./Shared/Done.svelte";
   import Export from "./Cloud/collectData";
 
-  let form = {
+  let form = $state({
     title: "",
     author: "",
     description: "",
@@ -28,22 +28,22 @@
     lang: "en",
     template: "",
     ...get(projects).filter(p => p.id === $state.currentProject)[0],
-  };
+  });
 
-  let selectTemplate = false;
+  let selectTemplate = $state(false);
 
-  let cover = [];
+  let cover = $state([]);
 
-  let progress = {
+  let progress = $state({
     active: false,
     done: false,
     file: {},
-  };
+  });
 
-  let exportToast = false;
-  let exportResponse = "";
+  let exportToast = $state(false);
+  let exportResponse = $state("");
 
-  let completeForm = false;
+  let completeForm = $state(false);
 
   const exportApi = "https://app.omniawrite.com/api/export";
 
@@ -54,14 +54,15 @@
     };
   });
 
-  $: checkForm =
+  let checkForm = $derived(
     form.title !== "" &&
     form.author !== "" &&
     form.description !== "" &&
     form.publisher !== "" &&
     form.lang !== "" &&
     form.template !== "" &&
-    cover.length !== 0;
+    cover.length !== 0
+  );
 
   const fetchTemplates = async () => {
     const req = await fetch("https://app.omniawrite.com/api/templates");
@@ -119,7 +120,7 @@
 <Toast bind:show={exportToast} text={exportResponse} />
 <Toast bind:show={completeForm} text={$_('export.form')} />
 <Modal bind:show={progress.active}>
-  <h2 slot="header">{$_('export.progress')}</h2>
+  {#snippet header()}<h2>{$_('export.progress')}</h2>{/snippet}
   <center>
     {#if progress.done}
       <Done file={progress.file} />
@@ -129,17 +130,17 @@
   </center>
 </Modal>
 <Modal bind:show={selectTemplate}>
-  <h2 slot="header">{$_('export.templates')}</h2>
+  {#snippet header()}<h2>{$_('export.templates')}</h2>{/snippet}
   {#await fetchTemplates()}
     <Spinner />
   {:then templates}
     <Grid>
       {#each templates as template}
         <GridElement
-          on:click={() => ([form.template, selectTemplate] = [template, false])}>
+          onclick={() => ([form.template, selectTemplate] = [template, false])}>
           <h2>
             {#if form.template.id === template.id}
-              <span class="lnr lnr-checkmark-circle" />
+              <span class="lnr lnr-checkmark-circle"></span>
             {/if}
             {template.name}
           </h2>
@@ -153,9 +154,9 @@
 <div in:fade={{ duration: 100 }}>
   <Field label={$_('export.template')}>
     <ButtonGroup>
-      <Button on:click={() => (selectTemplate = true)}>
+      <Button onclick={() => (selectTemplate = true)}>
         {#if form.template !== ''}
-          <span class="lnr lnr-checkmark-circle" />
+          <span class="lnr lnr-checkmark-circle"></span>
           {form.template.name}
         {:else}{$_('export.action.choose')}{/if}
       </Button>
@@ -197,7 +198,7 @@
     required="true"
     helper={$_('export.helpers.cover')} />
   <ButtonGroup>
-    <Button on:click={download} disabled={!checkForm}>
+    <Button onclick={download} disabled={!checkForm}>
       {$_('export.action.export')}
     </Button>
   </ButtonGroup>

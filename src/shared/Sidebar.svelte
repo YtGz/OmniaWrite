@@ -17,9 +17,9 @@
   import Close from "./Sidebar/Close.svelte";
   import EditProject from "./Sidebar/EditProject.svelte";
 
-  export let sidebarState;
+  let { sidebarState = $bindable() } = $props();
 
-  const modals = {
+  let modals = $state({
     reArrange: false,
     createChapter: false,
     editProject: false,
@@ -35,20 +35,20 @@
       show: false,
       data: {},
     },
-  };
+  });
 
   const createScene = chapter => {
     modals.createScene.chapter = chapter;
     modals.createScene.show = true;
   };
 
-  const editChapter = event => {
-    modals.editChapter.data = event.detail;
+  const editChapter = (chapterData) => {
+    modals.editChapter.data = chapterData;
     modals.editChapter.show = true;
   };
 
-  const editScene = event => {
-    modals.editScene.data = event.detail;
+  const editScene = (sceneData) => {
+    modals.editScene.data = sceneData;
     modals.editScene.show = true;
   };
 </script>
@@ -84,15 +84,15 @@
         {#each $chapters
           .filter(chapter => chapter.project == $state.currentProject)
           .sort((a, b) => a.order - b.order) as chapter, i}
-          <Chapter {chapter} on:edit={editChapter}>
+          <Chapter {chapter} onedit={editChapter}>
             {#each $scenes
               .filter(scene => scene.chapter == chapter.id)
               .sort((a, b) => a.order - b.order) as scene}
-              <Scene {scene} on:edit={editScene} />
+              <Scene {scene} onedit={editScene} />
             {/each}
             <ButtonGroup small={true}>
-              <Button on:click={() => createScene(chapter.id)}>
-                <span class="lnr lnr-plus-circle" />
+              <Button onclick={() => createScene(chapter.id)}>
+                <span class="lnr lnr-plus-circle"></span>
                 {$_('sidebar.createScene')}
               </Button>
             </ButtonGroup>
@@ -102,7 +102,7 @@
             <div
               class="placeholder-chapters"
               use:tippy={{ content: $_('sidebar.createChapter'), placement: 'bottom' }}
-              on:click={() => (modals.createChapter = true)}>
+              onclick={() => (modals.createChapter = true)}>
               {$_('sidebar.placeholderChapters')}
             </div>
           </Placeholder>
@@ -115,18 +115,18 @@
       <div class="actions">
         <div
           use:tippy={{ content: $_('sidebar.editProject'), placement: 'top' }}
-          on:click={() => (modals.editProject = true)}>
-          <span class="lnr lnr-cog collapse" />
+          onclick={() => (modals.editProject = true)}>
+          <span class="lnr lnr-cog collapse"></span>
         </div>
         <div
           use:tippy={{ content: $_('sidebar.editOrder'), placement: 'top' }}
-          on:click={() => (modals.reArrange = true)}>
-          <span class="lnr lnr-line-spacing collapse" />
+          onclick={() => (modals.reArrange = true)}>
+          <span class="lnr lnr-line-spacing collapse"></span>
         </div>
         <div
           use:tippy={{ content: $_('sidebar.createChapter'), placement: 'top' }}
-          on:click={() => (modals.createChapter = true)}>
-          <span class="lnr lnr-plus-circle collapse" />
+          onclick={() => (modals.createChapter = true)}>
+          <span class="lnr lnr-plus-circle collapse"></span>
         </div>
       </div>
     {/if}

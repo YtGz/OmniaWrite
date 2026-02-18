@@ -1,29 +1,31 @@
 <script>
-  export let show = false;
+  let {
+    show = $bindable(false),
+    danger = false,
+    success = false,
+    info = false,
+    warning = false,
+    duration = 10000,
+    title,
+    children
+  } = $props();
 
-  export let danger = false;
-  export let success = false;
-  export let info = false;
-  export let warning = false;
-
-  export let duration = 10000;
-
-  $: {
+  $effect(() => {
     if (show) {
       setTimeout(() => {
         show = false;
       }, duration);
     }
-  }
+  });
 </script>
 
 {#if show}
   <div class="alert" class:danger class:success class:warning class:info>
-    <span class="closebtn" on:click={() => (show = false)}>
-      <span class="lnr lnr-cross" />
+    <span class="closebtn" onclick={() => (show = false)}>
+      <span class="lnr lnr-cross"></span>
     </span>
-    <slot name="title" />
-    <slot />
+    {@render title?.()}
+    {@render children?.()}
   </div>
 {/if}
 

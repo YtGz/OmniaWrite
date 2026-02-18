@@ -8,7 +8,7 @@
   import ProjectOverview from "./Overview/Project.svelte";
   import { formatDistance } from "../utils";
 
-  let showCreateProject = false;
+  let showCreateProject = $state(false);
 
   const changeProject = project => {
     state.setCurrentProject(project);
@@ -29,7 +29,7 @@
 
 <CreateProject
   bind:showCreateProject
-  on:changeProject={event => changeProject(event.detail.project)} />
+  onchangeProject={(project) => changeProject(project)} />
 
 <div in:fade={{ duration: 100 }} class="overview">
   {#each $projects.filter(project => project.id == $state.currentProject) as project}
@@ -38,13 +38,13 @@
   {/each}
   <h1>{$_('overview.projects.title')}</h1>
   <Grid>
-    <GridElement action="true" on:click={() => (showCreateProject = true)}>
-      <span class="lnr lnr-plus-circle" />
+    <GridElement action="true" onclick={() => (showCreateProject = true)}>
+      <span class="lnr lnr-plus-circle"></span>
     </GridElement>
     {#each $projects.sort(sort) as project}
       <GridElement
         title={project.title}
-        on:click={() => changeProject(project.id)}>
+        onclick={() => changeProject(project.id)}>
         <p>
           {$_('overview.projects.opened')}
           {formatDistance(project.lastOpen)}

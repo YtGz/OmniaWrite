@@ -1,33 +1,28 @@
 <script>
-  import { createEventDispatcher } from "svelte";
   import { _ } from "svelte-i18n";
   import { projects } from "../../stores";
   import { Input, ButtonGroup, Button, Select } from "../../components/Forms";
 
   import Modal from "../../shared/Modal.svelte";
 
-  const dispatch = createEventDispatcher();
+  let { showCreateProject = $bindable(false), onchangeProject } = $props();
 
-  export let showCreateProject = false;
-
-  let form = {
+  let form = $state({
     title: "",
     author: "",
     description: "",
     publisher: "",
     language: "",
-  };
+  });
 
-  $: checkForm = form.title !== "";
+  let checkForm = $derived(form.title !== "");
 
   const createProject = () => {
     if (!checkForm) return false;
 
     let id = projects.createProject(...Object.values(form));
     showCreateProject = false;
-    dispatch("changeProject", {
-      project: id,
-    });
+    onchangeProject?.(id);
   };
 
   const languages = ["en", "de", "ru", "es", "pt", "fr", "it"].map(language => {
@@ -39,8 +34,8 @@
 </script>
 
 <Modal bind:show={showCreateProject}>
-  <h2 slot="header">{$_('overview.modals.newProject.header')}</h2>
-  <form on:submit|preventDefault={createProject}>
+  {#snippet header()}<h2>{$_('overview.modals.newProject.header')}</h2>{/snippet}
+  <form onsubmit={(e) => { e.preventDefault(); createProject(); }}>
     <Input
       label={$_('export.title')}
       bind:value={form.title}
@@ -70,7 +65,7 @@
       bind:value={form.description}
       helper={$_('export.helpers.description')} />
     <ButtonGroup>
-      <Button on:click={createProject} disabled={!checkForm}>
+      <Button onclick={createProject} disabled={!checkForm}>
         {$_('overview.modals.newProject.button')}
       </Button>
     </ButtonGroup>

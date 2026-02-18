@@ -8,9 +8,9 @@
   import Spinner from "./Spinner.svelte";
   import { formatDistance } from "../utils";
 
-  let latest;
-  let show = false;
-  let loading = false;
+  let latest = $state();
+  let show = $state(false);
+  let loading = $state(false);
 
   onMount(async () => {
     latest = await cloud.getLatestBackup();
@@ -47,7 +47,7 @@
 </script>
 
 <Modal bind:show>
-  <h2 slot="header">{$_('common.modals.newBackup.header')}</h2>
+  {#snippet header()}<h2>{$_('common.modals.newBackup.header')}</h2>{/snippet}
   <p>{$_('common.modals.newBackup.subtitle')}</p>
   {#if loading}
     <center>
@@ -55,14 +55,14 @@
     </center>
   {:else}
     <ul>
-      <li on:click={download}>
+      <li onclick={download}>
         <span class="from-now">
           {formatDistance(getTimestamp(latest.files[0]))}
         </span>
         <span class="file-size">
           {formatBytes(latest.files[0].sizeOriginal)}
         </span>
-        <span class="lnr lnr-cloud-download" />
+        <span class="lnr lnr-cloud-download"></span>
       </li>
     </ul>
     <p class="hint">{$_('common.modals.newBackup.warning')}</p>

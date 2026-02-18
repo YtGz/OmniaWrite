@@ -10,13 +10,13 @@
     ButtonGroup,
   } from "../../../components/Forms";
 
-  let old_password = "";
-  let new_password = "";
-  let new_password_confirm = "";
+  let old_password = $state("");
+  let new_password = $state("");
+  let new_password_confirm = $state("");
 
-  let textToast = "";
-  let showToast = false;
-  let loading = false;
+  let textToast = $state("");
+  let showToast = $state(false);
+  let loading = $state(false);
 
   const updatePassword = () => {
     if (
@@ -45,7 +45,7 @@
 
 <h2>{$_('cloud.profile.password.title')}</h2>
 
-<form on:submit|preventDefault={updatePassword}>
+<form onsubmit={(e) => { e.preventDefault(); updatePassword(); }}>
   <InputPassword
     label={$_('cloud.profile.password.fields.old')}
     placeholder="******"
@@ -59,7 +59,7 @@
     placeholder="******"
     bind:value={new_password_confirm} />
   <ButtonGroup>
-    <Button on:click={updatePassword} {loading}>
+    <Button onclick={updatePassword} {loading}>
       {$_('cloud.profile.action')}
     </Button>
   </ButtonGroup>

@@ -4,8 +4,7 @@
   import { Input, Button, ButtonGroup } from "../../components/Forms";
   import Modal from "../../shared/Modal.svelte";
 
-  export let show;
-  export let data;
+  let { show = $bindable(), data = $bindable() } = $props();
 
   const editChapter = () => {
     chapters.setChapterTitle(data.id, data.title);
@@ -22,8 +21,8 @@
 </script>
 
 <Modal bind:show>
-  <h2 slot="header">{$_('sidebar.editChapter')}</h2>
-  <form on:submit|preventDefault={editChapter}>
+  {#snippet header()}<h2>{$_('sidebar.editChapter')}</h2>{/snippet}
+  <form onsubmit={(e) => { e.preventDefault(); editChapter(); }}>
     <Input
       label={$_('sidebar.modal.title')}
       bind:value={data.title}
@@ -31,10 +30,10 @@
       autofocus="true"
       placeholder={$_('placeholder.title')} />
     <ButtonGroup>
-      <Button on:click={editChapter} disabled={data.title.length === 0}>
+      <Button onclick={editChapter} disabled={data.title.length === 0}>
         {$_('sidebar.modal.edit.buttonSave')}
       </Button>
-      <Button on:click={() => removeChapter(data.id)} color="red">
+      <Button onclick={() => removeChapter(data.id)} color="red">
         {$_('sidebar.modal.edit.buttonDelete')}
       </Button>
     </ButtonGroup>

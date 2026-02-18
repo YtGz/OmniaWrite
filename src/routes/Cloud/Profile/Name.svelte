@@ -6,11 +6,11 @@
 
   import { Input, Button, ButtonGroup } from "../../../components/Forms";
 
-  export let name;
+  let { name = $bindable() } = $props();
 
-  let showToast = false;
-  let textToast = "";
-  let loading = false;
+  let showToast = $state(false);
+  let textToast = $state("");
+  let loading = $state(false);
 
   const updateName = () => {
     loading = true;
@@ -29,13 +29,13 @@
 
 <h2>{$_('cloud.profile.name.title')}</h2>
 
-<form on:submit|preventDefault={updateName}>
+<form onsubmit={(e) => { e.preventDefault(); updateName(); }}>
   <Input
     label={$_('cloud.profile.name.fields.name')}
     placeholder="John Doe"
     bind:value={name} />
   <ButtonGroup>
-    <Button on:click={updateName} {loading}>
+    <Button onclick={updateName} {loading}>
       {$_('cloud.profile.action')}
     </Button>
   </ButtonGroup>

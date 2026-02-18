@@ -23,19 +23,19 @@
     },
   ];
 
-  let selected = false;
-  let selectedComponent;
+  let selected = $state(false);
+  let selectedComponent = $state();
 </script>
 
 <Modal bind:show={selected}>
-  <h2 slot="header">{selectedComponent.title}</h2>
+  {#snippet header()}<h2>{selectedComponent.title}</h2>{/snippet}
   <svelte:component this={selectedComponent.component} />
 </Modal>
 <div class="export" in:fade={{ duration: 100 }}>
   {#if $state.currentProject}
     <Grid>
       <GridElement
-        on:click={() => ([selected, selectedComponent] = [true, { title: $_('export.cloud.title'), component: Cloud }])}>
+        onclick={() => ([selected, selectedComponent] = [true, { title: $_('export.cloud.title'), component: Cloud }])}>
         <h1>{$_('export.cloud.title')}</h1>
         <p>{$_('export.cloud.subtitle')}</p>
       </GridElement>
@@ -43,7 +43,7 @@
     <Grid>
       {#each types as type}
         <GridElement
-          on:click={() => ([selected, selectedComponent] = [true, type])}>
+          onclick={() => ([selected, selectedComponent] = [true, type])}>
           <h1>{type.title}</h1>
         </GridElement>
       {/each}

@@ -5,17 +5,17 @@
   import Modal from "./Modal.svelte";
   import Disclaimer from "./Disclaimer.svelte";
 
-  let disclaimer = false;
-  let showDisclaimer = false;
+  let disclaimer = $state(false);
+  let showDisclaimer = $state(false);
 
-  $: languages = $locales.map(locale => ({
+  let languages = $derived($locales.map(locale => ({
     value: locale,
     text: $_(`settings.appereance.language.${locale}`),
-  }));
+  })));
 </script>
 
-<Modal show="true" persistent="true">
-  <h2 slot="header">OmniaWrite</h2>
+<Modal show={true} persistent={true}>
+  {#snippet header()}<h2>OmniaWrite</h2>{/snippet}
   <div class="install">
     <Select
       label={$_('settings.appereance.language.title')}
@@ -28,18 +28,18 @@
     <ButtonGroup>
       <Button
         disabled={!disclaimer}
-        on:click={() => ($intern.installed = true)}>
+        onclick={() => ($intern.installed = true)}>
         {$_('install.action')}
       </Button>
     </ButtonGroup>
-    <p class="link" on:click={() => (showDisclaimer = true)}>
+    <p class="link" onclick={() => (showDisclaimer = true)}>
       {$_('install.disclaimer.show')}
     </p>
   </div>
 </Modal>
 
 <Modal bind:show={showDisclaimer}>
-  <h2 slot="header">{$_('install.disclaimer.title')}</h2>
+  {#snippet header()}<h2>{$_('install.disclaimer.title')}</h2>{/snippet}
   <Disclaimer />
 </Modal>
 

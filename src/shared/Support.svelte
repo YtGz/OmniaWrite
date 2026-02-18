@@ -11,13 +11,13 @@
 
   import { ui } from "../stores";
 
-  let email = "";
-  let description = "";
+  let email = $state("");
+  let description = $state("");
 
-  let sent = false;
-  let loading = false;
+  let sent = $state(false);
+  let loading = $state(false);
 
-  $: checkForm = email !== "" && description !== "";
+  let checkForm = $derived(email !== "" && description !== "");
 
   const send = () => {
     if (!checkForm) {
@@ -47,11 +47,11 @@
 </script>
 
 <Modal bind:show={$ui.support.show}>
-  <h2 slot="header">{$_('feedback.title')}</h2>
+  {#snippet header()}<h2>{$_('feedback.title')}</h2>{/snippet}
   {#if !sent}
     <p>{$_('feedback.sub')}</p>
     <hr />
-    <form on:submit|preventDefault={send}>
+    <form onsubmit={(e) => { e.preventDefault(); send(); }}>
       <InputEmail
         label={$_('feedback.email')}
         bind:value={email}
@@ -59,14 +59,14 @@
         placeholder="john.does@email.ltd" />
       <Textarea bind:value={description} label={$_('feedback.description')} />
       <ButtonGroup>
-        <Button on:click={send} {loading} disabled={!checkForm}>
+        <Button onclick={send} {loading} disabled={!checkForm}>
           {$_('feedback.action')}
         </Button>
       </ButtonGroup>
     </form>
   {:else}
     <center>
-      <span class="lnr lnr-checkmark-circle" style="font-size: 4rem" />
+      <span class="lnr lnr-checkmark-circle" style="font-size: 4rem"></span>
       <h2>{$_('feedback.success')}</h2>
     </center>
   {/if}

@@ -1,15 +1,14 @@
 <script>
-  export let state;
-  export let right = true;
+  let { state = $bindable(), right = true } = $props();
 </script>
 
 {#if state}
   <div
     class="close"
     class:right
-    on:click={() => (state = false)}
+    onclick={() => (state = false)}
     style="-webkit-app-region: no-drag">
-    <span class="lnr lnr-cross" />
+    <span class="lnr lnr-cross"></span>
   </div>
 {/if}
 

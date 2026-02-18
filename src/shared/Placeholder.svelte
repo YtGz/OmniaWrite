@@ -1,9 +1,15 @@
 <script>
   import { _ } from "svelte-i18n";
+
+  let { children } = $props();
 </script>
 
 <div class="placeholder">
-  <slot>{$_('common.no-project-selected')}</slot>
+  {#if children}
+    {@render children()}
+  {:else}
+    {$_('common.no-project-selected')}
+  {/if}
 </div>
 
 <style>

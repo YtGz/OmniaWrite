@@ -10,6 +10,9 @@ module.exports = {
     "\\.(css|scss|stylesheet)$": "<rootDir>/__mocks__/styleMock.js",
   },
   setupFilesAfterEnv: ["@testing-library/jest-dom"],
+  transformIgnorePatterns: [
+    "/node_modules/(?!@testing-library|svelte-htm|svelte|esm-env|esrap|zimmerframe|htm)",
+  ],
   testPathIgnorePatterns: ["/node_modules/", "/build/", "/storybook-static/"],
   testEnvironment: "jsdom",
 };

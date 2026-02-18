@@ -10,14 +10,13 @@
   import Placeholder from "../shared/Placeholder.svelte";
   import Modal from "../shared/Modal.svelte";
 
-  export let params = {};
-  let currentScene;
-  let editor;
-  let editorStatus = 0;
-  let currentHistory = 0;
-  let lengthHistory = 0;
-  let showCards = false;
-  let filteredCards = [];
+  let { params = {} } = $props();
+  let editor = $state();
+  let editorStatus = $state(0);
+  let currentHistory = $state(0);
+  let lengthHistory = $state(0);
+  let showCards = $state(false);
+  let filteredCards = $state([]);
   const editorLanguage = {
     placeholder: $_("write.editor.placeholder"),
     switch: $_("write.editor.switch"),
@@ -31,12 +30,13 @@
     },
   };
 
-  $: currentScene = $scenes.find(scene => scene.id == params.sceneId);
-  $: {
+  let currentScene = $derived($scenes.find(scene => scene.id == params.sceneId));
+
+  $effect(() => {
     state.setCurrentTitle(
       params.sceneId ? currentScene.title : "No scene selected!"
     );
-  }
+  });
 
   const titleInput = () => {
     scenes.setSceneTitle(currentScene.id, currentScene.title);
@@ -98,7 +98,7 @@
   {#if $state.currentProject}
     {#if params.sceneId !== null}
       <Modal bind:show={showCards}>
-        <h2 slot="header">{$_('write.toolbar.cards')}</h2>
+        {#snippet header()}<h2>{$_('write.toolbar.cards')}</h2>{/snippet}
         {#each filteredCards as card}
           <div>
             <h2>{card.title}</h2>
@@ -116,28 +116,28 @@
             <span
               class="lnr lnr-bold"
               use:tippy={{ content: $_('write.toolbar.bold'), placement: 'bottom' }}
-              on:click={() => editor.toggleFormat('bold')} />
+              onclick={() => editor.toggleFormat('bold')}></span>
             <span
               class="lnr lnr-italic"
               use:tippy={{ content: $_('write.toolbar.italic'), placement: 'bottom' }}
-              on:click={() => editor.toggleFormat('italic')} />
+              onclick={() => editor.toggleFormat('italic')}></span>
             <span
               class="lnr lnr-underline"
               use:tippy={{ content: $_('write.toolbar.underline'), placement: 'bottom' }}
-              on:click={() => editor.toggleFormat('underline')} />
+              onclick={() => editor.toggleFormat('underline')}></span>
             {#if currentHistory < lengthHistory - 1}
               <span
                 transition:fade={{ duration: 100 }}
                 class="lnr lnr-undo"
                 use:tippy={{ content: $_('write.toolbar.undo'), placement: 'bottom' }}
-                on:click={undo} />
+                onclick={undo}></span>
             {/if}
             {#if currentHistory !== 0}
               <span
                 transition:fade={{ duration: 100 }}
                 class="lnr lnr-redo"
                 use:tippy={{ content: $_('write.toolbar.redo'), placement: 'bottom' }}
-                on:click={redo} />
+                onclick={redo}></span>
             {/if}
           </div>
           <div>
@@ -146,14 +146,13 @@
                 transition:fade={{ duration: 100 }}
                 class="lnr lnr-bookmark"
                 use:tippy={{ content: $_('write.toolbar.cards'), placement: 'bottom' }}
-                on:click={() => (showCards = true)} />
+                onclick={() => (showCards = true)}></span>
             {/if}
             {#if $ui.focus}
-              <!-- svelte-ignore a11y-no-onchange -->
               <select
                 id="focusSceneSelect"
                 transition:fade={{ duration: 100 }}
-                on:change={switchScene}
+                onchange={switchScene}
                 class="lnr"
                 use:tippy={{ content: $_('write.toolbar.switchScene'), placement: 'bottom' }}>
                 <option value="" selected="selected">&#xe871;</option>
@@ -171,15 +170,15 @@
             <span
               class="lnr"
               use:tippy={{ content: $_('write.toolbar.focus'), placement: 'bottom' }}
-              on:click={toggleFocus}
+              onclick={toggleFocus}
               class:lnr-eye={!$ui.focus}
-              class:lnr-exit={$ui.focus} />
+              class:lnr-exit={$ui.focus}></span>
             <span
               class="lnr"
               use:tippy={{ content: $_('write.toolbar.savestate'), placement: 'bottom' }}
               class:lnr-sync={editorStatus === 1}
               class:spinner={editorStatus === 1}
-              class:lnr-checkmark-circle={editorStatus === 2} />
+              class:lnr-checkmark-circle={editorStatus === 2}></span>
           </div>
         </div>
       </div>
@@ -187,7 +186,7 @@
         <h1
           contenteditable
           bind:textContent={currentScene.title}
-          on:input={titleInput} />
+          oninput={titleInput}></h1>
         <OmniaEditor
           bind:this={editor}
           bind:data={currentScene.content}

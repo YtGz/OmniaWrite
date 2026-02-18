@@ -1,5 +1,4 @@
 <script>
-  import { createEventDispatcher } from "svelte";
   import { fly } from "svelte/transition";
   import { link } from "svelte-spa-router";
   import {
@@ -20,16 +19,14 @@
   import Tabs from "./Header/Tabs.svelte";
   import Spinner from "./Spinner.svelte";
 
-  export let navigationState;
+  let { navigationState = $bindable(), onopenSidebar } = $props();
 
-  const dispatch = createEventDispatcher();
-
-  const cloudToast = {
+  let cloudToast = $state({
     show: false,
     text: "",
-  };
+  });
 
-  let cloudState = "none";
+  let cloudState = $state("none");
 
   const syncCloud = () => {
     cloudState = "loading";
@@ -45,7 +42,7 @@
     );
   };
 
-  $: {
+  $effect(() => {
     if ($state.isUserLoggedIn) {
       if (
         !$state.lastCloudSave ||
@@ -56,7 +53,7 @@
         cloudState = "done";
       }
     }
-  }
+  });
 </script>
 
 <header style="-webkit-app-region: drag" class:focus={$ui.focus}>
@@ -64,9 +61,9 @@
     <button
       class="burger"
       id="open-sidebar"
-      on:click={() => dispatch('openSidebar')}
+      onclick={() => onopenSidebar?.()}
       style="-webkit-app-region: no-drag">
-      <span class="lnr lnr-menu" />
+      <span class="lnr lnr-menu"></span>
     </button>
     <a
       class="logo-mobile"
@@ -106,11 +103,11 @@
             <a href="/cloud" use:link>{$_('header.cloud.title')}</a>
           </li>
           {#if cloudState === 'upload'}
-            <li on:click={syncCloud} style="-webkit-app-region: no-drag">
-              <span class="lnr lnr-cloud-upload" />
+            <li onclick={syncCloud} style="-webkit-app-region: no-drag">
+              <span class="lnr lnr-cloud-upload"></span>
             </li>
           {:else if cloudState === 'done'}
-            <li><span class="lnr lnr-cloud-check" /></li>
+            <li><span class="lnr lnr-cloud-check"></span></li>
           {:else if cloudState === 'loading'}
             <li>
               <Spinner />
@@ -120,29 +117,29 @@
         {#if isRunningElectron}
           <span
             class="lnr lnr-cross titlebar"
-            on:click={closeWindow}
-            style="-webkit-app-region: no-drag" />
+            onclick={closeWindow}
+            style="-webkit-app-region: no-drag"></span>
           <span
             class="lnr lnr-frame-expand titlebar"
-            on:click={resizeWindow}
-            style="-webkit-app-region: no-drag" />
+            onclick={resizeWindow}
+            style="-webkit-app-region: no-drag"></span>
           <span
             class="lnr lnr-chevron-down titlebar"
-            on:click={minimizeWindow}
-            style="-webkit-app-region: no-drag" />
+            onclick={minimizeWindow}
+            style="-webkit-app-region: no-drag"></span>
         {/if}
         <span
           class="lnr lnr-question-circle titlebar feedback"
           style="-webkit-app-region: no-drag"
-          on:click={() => ($ui.support.show = true)} />
+          onclick={() => ($ui.support.show = true)}></span>
       </div>
     {/if}
     <button
       class="mobile"
       id="open-navigation"
-      on:click={() => (navigationState = true)}
+      onclick={() => (navigationState = true)}
       style="-webkit-app-region: no-drag">
-      <span class="lnr lnr-book" />
+      <span class="lnr lnr-book"></span>
     </button>
   </nav>
   <Tabs />
@@ -150,7 +147,7 @@
 <Toast
   bind:show={cloudToast.show}
   text={cloudToast.text}
-  on:click={() => (cloudToast.show = false)} />
+  onclick={() => (cloudToast.show = false)} />
 
 <style lang="scss">
   @import "../css/mixins/devices";

@@ -1,14 +1,9 @@
 <script>
-  import { createEventDispatcher } from "svelte";
-
-  const dispatch = createEventDispatcher();
-  const click = () => {
-    dispatch("click");
-  };
+  let { onclick, children } = $props();
 </script>
 
-<tr on:click={click}>
-  <slot />
+<tr {onclick}>
+  {@render children?.()}
 </tr>
 
 <style lang="scss">

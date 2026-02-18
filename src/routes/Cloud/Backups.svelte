@@ -6,7 +6,7 @@
   import Spinner from "../../shared/Spinner.svelte";
   import { formatDistance, formatDate } from "../../utils";
 
-  let isLoadingBackup = false;
+  let isLoadingBackup = $state(false);
 
   function restoreBackup(id) {
     isLoadingBackup = true;
@@ -48,7 +48,7 @@
         <Heading>Size</Heading>
       </Row>
       {#each backups.files as backup}
-        <Row on:click={() => restoreBackup(backup.$id)}>
+        <Row onclick={() => restoreBackup(backup.$id)}>
           <Cell label="Timestamp">{formatDate(getTimestamp(backup))}</Cell>
           <Cell label="Age">{formatDistance(getTimestamp(backup))}</Cell>
           <Cell label="Size">{formatBytes(backup.sizeOriginal)}</Cell>

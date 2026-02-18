@@ -1,12 +1,12 @@
 <script>
-  export let state;
+  let { state = $bindable() } = $props();
 </script>
 
 {#if state}
   <div
     class="backdrop"
-    on:click={() => (state = false)}
-    style="-webkit-app-region: no-drag" />
+    onclick={() => (state = false)}
+    style="-webkit-app-region: no-drag"></div>
 {/if}
 
 <style lang="scss">

@@ -1,9 +1,13 @@
 <script>
   import { fade, scale } from "svelte/transition";
 
-  export let show = false;
-  export let fullscreen = false;
-  export let persistent = false;
+  let {
+    show = $bindable(false),
+    fullscreen = false,
+    persistent = false,
+    header,
+    children
+  } = $props();
 
   const handleKeydown = event => {
     if (event.keyCode === 27 && !persistent) {
@@ -13,28 +17,28 @@
   };
 </script>
 
-<svelte:window on:keydown={handleKeydown} />
+<svelte:window onkeydown={handleKeydown} />
 {#if show}
   <div
     class="modal-backdrop"
-    on:click={() => (persistent ? '' : (show = false))}
+    onclick={() => (persistent ? '' : (show = false))}
     in:fade={{ duration: 200 }}
-    out:fade={{ duration: 200 }} />
+    out:fade={{ duration: 200 }}></div>
   <div
     class="modal"
     in:scale={{ duration: 200 }}
     out:scale={{ duration: 200 }}
     class:fullscreen>
     <div class="modal-header">
-      <slot name="header" />
+      {@render header?.()}
       {#if !persistent}
-        <div class="modal-close" on:click={() => (show = false)}>
-          <span class="lnr lnr-cross" />
+        <div class="modal-close" onclick={() => (show = false)}>
+          <span class="lnr lnr-cross"></span>
         </div>
       {/if}
     </div>
     <div class="modal-content">
-      <slot />
+      {@render children?.()}
     </div>
   </div>
 {/if}
