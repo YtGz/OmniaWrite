@@ -2,8 +2,8 @@
   "appId": "com.omniawrite.app",
   "appName": "OmniaWrite",
   "bundledWebRuntime": false,
-  "npmClient": "npm",
-  "webDir": "public",
+  "npmClient": "bun",
+  "webDir": "build",
   "plugins": {
     "SplashScreen": {
       "launchShowDuration": 0

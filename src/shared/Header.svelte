@@ -10,7 +10,7 @@
   import { state, ui } from "../stores";
   import { _ } from "svelte-i18n";
 
-  import { active } from "@keenmate/svelte-spa-router/active";
+  import active from "@keenmate/svelte-spa-router/active";
 
   import cloud from "../appwrite";
   import Toast from "./Toast.svelte";

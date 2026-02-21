@@ -1,5 +1,4 @@
 import saveAs from "file-saver";
-import { Plugins, FilesystemDirectory } from "@capacitor/core";
 import { getBase64 } from "./utils";
 
 export const isRunningCapacitor =
@@ -8,7 +7,14 @@ export const isRunningElectron =
   window && window.process && window.process.type;
 
 const { ipcRenderer } = isRunningElectron ? window.require("electron") : {};
-const { Filesystem } = Plugins;
+
+// Capacitor Filesystem is loaded dynamically when needed
+let Filesystem;
+if (isRunningCapacitor) {
+  import("@capacitor/core").then(mod => {
+    Filesystem = mod.Filesystem;
+  });
+}
 
 export const reloadWindow = () =>
   isRunningElectron ? ipcRenderer.send("reload") : window.location.reload();
@@ -30,7 +36,7 @@ export const saveFile = async (blob, filename) => {
     const result = await Filesystem.writeFile({
       path: `OmniaWrite/${filename}`,
       data: await getBase64(blob),
-      directory: FilesystemDirectory.Documents,
+      directory: "DOCUMENTS",
     });
     return {
       type: "filesystem",
@@ -45,7 +51,7 @@ const prepareDirectory = async name => {
   try {
     return await Filesystem.mkdir({
       path: name,
-      directory: FilesystemDirectory.Documents,
+      directory: "DOCUMENTS",
       recursive: true,
     });
   } catch (error) {

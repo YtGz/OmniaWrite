@@ -34,13 +34,13 @@ const createWindow = () => {
     frame: false,
     title: "OmniaWrite",
     show: false,
-    icon: path.join(__dirname, "../build/icon.png"),
+    icon: path.join(__dirname, "../resources/icon.png"),
     webPreferences: {
       nodeIntegration: true,
     },
   });
 
-  mainWindow.loadURL(`file://${path.join(__dirname, "../public/index.html")}`);
+  mainWindow.loadURL(`file://${path.join(__dirname, "../build/index.html")}`);
   mainWindow.webContents.on("did-finish-load", () => {
     if (windowState.main) {
       mainWindow.show();
@@ -93,11 +93,11 @@ const createLoadingScreen = () => {
       frame: false,
       transparent: true,
       resizable: false,
-      icon: path.join(__dirname, "../build/icon.png"),
+      icon: path.join(__dirname, "../resources/icon.png"),
     })
   );
   loadingScreen.loadURL(
-    `file://${path.join(__dirname, "../public/splash/index.html")}`
+    `file://${path.join(__dirname, "../build/splash/index.html")}`
   );
 
   loadingScreen.on("closed", () => (loadingScreen = null));

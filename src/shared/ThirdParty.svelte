@@ -1,9 +1,7 @@
 <script>
   import Spinner from "./Spinner.svelte";
 
-  const licenses = import(
-    /* webpackChunkName: "licenses" */ "../licenses.json"
-  ).then(lic => {
+  const licenses = import("../licenses.json").then(lic => {
     let licenseData = [];
     Object.keys(lic).forEach(key => {
       licenseData.push({

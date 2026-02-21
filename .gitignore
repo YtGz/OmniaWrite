@@ -1,13 +1,9 @@
 .DS_Store
 node_modules
-public/bundle.*
+build/
 dist/
 storybook-static/
-public/service-worker.js
-src/licenses.json
-public/precache-manifest.*
-public/workbox-*
-public/fonts/*
+
 
 .env
 .env.build

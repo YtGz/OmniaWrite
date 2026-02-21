@@ -1,7 +1,7 @@
 <script>
   import { _ } from "svelte-i18n";
   import { push } from "@keenmate/svelte-spa-router";
-  import { active } from "@keenmate/svelte-spa-router/active";
+  import active from "@keenmate/svelte-spa-router/active";
   import tippy from "sveltejs-tippy";
 
   let { scene, onedit } = $props();

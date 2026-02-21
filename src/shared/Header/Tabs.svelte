@@ -1,7 +1,7 @@
 <script>
   import { get } from "svelte/store";
   import { link, location } from "@keenmate/svelte-spa-router";
-  import { active } from "@keenmate/svelte-spa-router/active";
+  import active from "@keenmate/svelte-spa-router/active";
 
   import { state, tabs, scenes } from "../../stores";
 
