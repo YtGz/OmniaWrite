@@ -4,7 +4,7 @@
   import { scenes, chapters, cards, state, settings, ui } from "../stores";
   import { push } from "@keenmate/svelte-spa-router";
   import { _ } from "svelte-i18n";
-  import OmniaEditor from "omnia-editor";
+  import { OmniaEditor } from "@ytgz/omnia-editor";
   import tippy from "sveltejs-tippy";
   import Overview from "./Write/Overview.svelte";
   import Placeholder from "../shared/Placeholder.svelte";
@@ -13,22 +13,8 @@
   let { routeParams = {} } = $props();
   let editor = $state();
   let editorStatus = $state(0);
-  let currentHistory = $state(0);
-  let lengthHistory = $state(0);
   let showCards = $state(false);
   let filteredCards = $state([]);
-  const editorLanguage = {
-    placeholder: $_("write.editor.placeholder"),
-    switch: $_("write.editor.switch"),
-    delete: $_("write.editor.delete"),
-    confirmDelete: $_("write.editor.confirmDelete"),
-    blocks: {
-      paragraph: $_("write.editor.blocks.paragraph"),
-      heading: $_("write.editor.blocks.heading"),
-      quote: $_("write.editor.blocks.quote"),
-      code: $_("write.editor.blocks.code"),
-    },
-  };
 
   let currentScene = $derived($scenes.find(scene => scene.id == routeParams.sceneId));
 
@@ -51,22 +37,16 @@
   });
 
   const routeChange = () => {
-    if (editor) {
-      editor.update();
-      document.querySelector(".content").scrollTo(0, 0);
-    }
+    document.querySelector(".content")?.scrollTo(0, 0);
   };
 
-  const change = e => {
-    scenes.setSceneContent(routeParams.sceneId, e.detail);
+  const change = () => {
+    const html = editor.getHTML();
+    scenes.setSceneContent(routeParams.sceneId, html);
     editorStatus = 2;
     filteredCards = $cards
-      .filter(e => e.showTooltip && e.project == $state.currentProject)
-      .filter(c =>
-        e.detail.blocks.some(
-          block => block.data.text && block.data.text.includes(c.title)
-        )
-      );
+      .filter(c => c.showTooltip && c.project == $state.currentProject)
+      .filter(c => html.includes(c.title));
   };
 
   const switchScene = e => {
@@ -79,18 +59,11 @@
   };
 
   const undo = () => {
-    editor.history.undo();
+    editor.undo();
   };
 
   const redo = () => {
-    editor.history.redo();
-  };
-
-  const init = () => {
-    editor.history.subscribe(n => {
-      currentHistory = n.current;
-      lengthHistory = n.data.length;
-    });
+    editor.redo();
   };
 </script>
 
@@ -114,31 +87,13 @@
         <div class="inner">
           <div>
             <span
-              class="lnr lnr-bold"
-              use:tippy={{ content: $_('write.toolbar.bold'), placement: 'bottom' }}
-              onclick={() => editor.toggleFormat('bold')}></span>
+              class="lnr lnr-undo"
+              use:tippy={{ content: $_('write.toolbar.undo'), placement: 'bottom' }}
+              onclick={undo}></span>
             <span
-              class="lnr lnr-italic"
-              use:tippy={{ content: $_('write.toolbar.italic'), placement: 'bottom' }}
-              onclick={() => editor.toggleFormat('italic')}></span>
-            <span
-              class="lnr lnr-underline"
-              use:tippy={{ content: $_('write.toolbar.underline'), placement: 'bottom' }}
-              onclick={() => editor.toggleFormat('underline')}></span>
-            {#if currentHistory < lengthHistory - 1}
-              <span
-                transition:fade={{ duration: 100 }}
-                class="lnr lnr-undo"
-                use:tippy={{ content: $_('write.toolbar.undo'), placement: 'bottom' }}
-                onclick={undo}></span>
-            {/if}
-            {#if currentHistory !== 0}
-              <span
-                transition:fade={{ duration: 100 }}
-                class="lnr lnr-redo"
-                use:tippy={{ content: $_('write.toolbar.redo'), placement: 'bottom' }}
-                onclick={redo}></span>
-            {/if}
+              class="lnr lnr-redo"
+              use:tippy={{ content: $_('write.toolbar.redo'), placement: 'bottom' }}
+              onclick={redo}></span>
           </div>
           <div>
             {#if filteredCards.length > 0}
@@ -189,12 +144,10 @@
           oninput={titleInput}></h1>
         <OmniaEditor
           bind:this={editor}
-          bind:data={currentScene.content}
-          spellCheck={$settings.spellCheck}
-          translation={editorLanguage}
-          on:init={init}
-          on:input={() => (editorStatus = 1)}
-          on:change={change} />
+          value={currentScene.content || ""}
+          spellcheck={$settings.spellCheck}
+          oninit={() => (editorStatus = 0)}
+          onchange={change} />
       </div>
     {:else}
       <Overview />

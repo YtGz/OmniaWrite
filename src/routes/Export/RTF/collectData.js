@@ -6,7 +6,7 @@ import { smartenText, toFileName } from "../../../utils";
 
 const toRTF = text => {
   return text
-    .replace(/([\\{}])/g, "\\$1") // escape RTF special characters
+    .replace(/([\\\{\}])/g, "\\$1") // escape RTF special characters
     .replace(/\u00A0/g, "\\~") // non-breaking space
     .replace(/\u00AD/g, "\\-") // optional hyphen
     .replace(/\u2011/g, "\\_") // non-breaking hyphen
@@ -23,40 +23,58 @@ const toRTF = text => {
     .replace(/&amp;/g, "&");
 };
 
+const parser = new DOMParser();
+
+/**
+ * Convert an HTML string to RTF by walking the DOM nodes.
+ */
+const htmlToRTF = html => {
+  if (!html) return "";
+  const doc = parser.parseFromString(html, "text/html");
+  const nodes = doc.body.childNodes;
+  let result = "";
+
+  for (const node of nodes) {
+    if (node.nodeType !== 1) continue;
+    const tag = node.tagName.toLowerCase();
+    const text = node.innerHTML.replace(/(\s|<br\s*\/?>)+$/, "");
+
+    switch (tag) {
+      case "h1":
+      case "h2":
+      case "h3":
+        result += `{\\f1\\sb300\\sa300\\qc\\fs40\\b ${toRTF(
+          smartenText(node.textContent)
+        )}\\par}\n`;
+        break;
+      case "blockquote":
+        result += `{\\f0\\fi-200\\li850\\ri600\\lin850\\sb300\\sa300\\i\\u8220"\\~${toRTF(
+          smartenText(node.textContent)
+        )}\\~\\u8221"\\par}\n`;
+        break;
+      case "pre":
+        result += `{\\f2\\fi0\\li300\\ri300\\lin300\\sb300\\sa300\\box\\brdrhair\\brdrw1\\brdrcf1\\brsp113 ${toRTF(
+          node.textContent
+        )}\\par}\n`;
+        break;
+      case "p":
+      default:
+        result += `{\\f0\\sb50\\sa50\\fi300\\sl276\\slmult1\\qj ${toRTF(
+          smartenText(text)
+        )}\\par}\n`;
+        break;
+    }
+  }
+
+  return result;
+};
+
 export default class Export {
   constructor(id) {
     this.projectId = id;
   }
   async fetchData() {
-    const blockMapper = currentBlock => {
-      if (!currentBlock.data) return [];
-
-      let text = currentBlock.data.text.replace(/(\s|<br \/>)+$/, ""); // trim trailing whitespace
-
-      switch (currentBlock.type) {
-        case "paragraph":
-          return `{\\f0\\sb50\\sa50\\fi300\\sl276\\slmult1\\qj ${toRTF(
-            smartenText(text)
-          )}\\par}\n`;
-        case "quote":
-          return `{\\f0\\fi-200\\li850\\ri600\\lin850\\sb300\\sa300\\i\\u8220"\\~${toRTF(
-            smartenText(text)
-          )}\\~\\u8221"\\par}\n`;
-        case "heading":
-          return `{\\f1\\sb300\\sa300\\qc\\fs40\\b ${toRTF(
-            smartenText(text)
-          )}\\par}\n`;
-        case "code":
-          return `{\\f2\\fi0\\li300\\ri300\\lin300\\sb300\\sa300\\box\\brdrhair\\brdrw1\\brdrcf1\\brsp113 ${toRTF(
-            text
-          )}\\par}\n`;
-        default:
-          return `{${toRTF(text)}\\par}\n`;
-      }
-    };
-
-    const sceneMapper = currentScene =>
-      currentScene.content.blocks.flatMap(blockMapper).join("");
+    const sceneMapper = currentScene => htmlToRTF(currentScene.content);
 
     const chapterMapper = currentChapter => {
       return (

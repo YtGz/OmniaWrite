@@ -18,8 +18,8 @@
     "@capacitor/android": "^8.1.0",
     "@capacitor/cli": "^8.1.0",
     "@capacitor/core": "^8.1.0",
+    "@ytgz/omnia-editor": "file:ytgz-omnia-editor-1.0.0.tgz",
     "omnia-ebook-generator": "^0.2.1",
-    "omnia-editor": "^1.0.0-beta.1",
     "semver": "^7.3.5",
     "sortablejs": "^1.13.0",
     "sveltejs-tippy": "^3.0.0"
@@ -66,6 +66,7 @@
     "svelte-i18n": "^4.0.1",
     "svelte-loader": "^3.2.4",
     "svelte-preprocess": "^6.0.3",
+    "typescript": "^5.9.3",
     "vitest": "^4.0.18",
     "webpack": "^5.105.2",
     "webpack-cli": "^6.0.1",
@@ -76,7 +77,7 @@
   "scripts": {
     "build": "run-s prepare:* svelte-build",
     "build:cap": "run-s build cap:sync",
-    "dev": "webpack-dev-server --content-base public",
+    "dev": "webpack serve --static-directory public --port 8080",
     "electron": "run-s build pure-electron",
     "test": "vitest run",
     "svelte-build": "cross-env NODE_ENV=production webpack",

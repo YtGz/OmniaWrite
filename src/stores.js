@@ -1,4 +1,26 @@
 import { writable, get } from "svelte/store";
+import { migrateBlocksToHtml } from "./utils";
+
+// Migrate legacy block JSON scene content to HTML strings
+(function migrateSceneContent() {
+  try {
+    const raw = localStorage.getItem("scenes");
+    if (!raw) return;
+    const scenesData = JSON.parse(raw);
+    let changed = false;
+    for (const scene of scenesData) {
+      if (scene.content && typeof scene.content === "object" && scene.content.blocks) {
+        scene.content = migrateBlocksToHtml(scene.content);
+        changed = true;
+      }
+    }
+    if (changed) {
+      localStorage.setItem("scenes", JSON.stringify(scenesData));
+    }
+  } catch (e) {
+    // Ignore migration errors on corrupt data
+  }
+})();
 
 const defaultIntern = {
   version: "1.1.0",

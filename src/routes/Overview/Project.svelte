@@ -3,7 +3,7 @@
   import { _ } from "svelte-i18n";
 
   import { state, chapters, scenes } from "../../stores";
-  import { countChars, countWords } from "../../utils";
+  import { countCharsHtml, countWordsHtml } from "../../utils";
   import Grid from "../../components/Grid/Grid.svelte";
   import GridElement from "../../components/Grid/GridElement.svelte";
   import Spinner from "../../shared/Spinner.svelte";
@@ -16,12 +16,12 @@
       get(scenes).filter(s => s.chapter == e.id)
     );
     const filteredRest = filteredScenes
-      .flatMap(e => (e.content && e.content.blocks ? e.content.blocks : []))
+      .filter(e => e.content)
       .reduce(
         (prev, curr) => {
           return {
-            words: prev.words + countWords(curr.data.text),
-            chars: prev.chars + countChars(curr.data.text),
+            words: prev.words + countWordsHtml(curr.content),
+            chars: prev.chars + countCharsHtml(curr.content),
           };
         },
         { words: 0, chars: 0 }

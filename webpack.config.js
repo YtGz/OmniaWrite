@@ -78,6 +78,12 @@ module.exports = {
         }
       },
       {
+        test: /node_modules\/@tiptap\/.*\.js$/,
+        resolve: {
+          fullySpecified: false
+        }
+      },
+      {
         test: /\.(sa|sc|c)ss$/,
         use: [
           // Creates `style` nodes from JS strings

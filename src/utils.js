@@ -111,11 +111,49 @@ export const smartenText = s => {
   return s;
 };
 
+/**
+ * Convert legacy block JSON content to HTML string.
+ * Returns the content unchanged if it's already an HTML string.
+ */
+export function migrateBlocksToHtml(content) {
+  if (!content) return "";
+  if (typeof content === "string") return content;
+  if (!content.blocks || !Array.isArray(content.blocks)) return "";
+
+  return content.blocks
+    .filter(block => block.data && block.data.text)
+    .map(block => {
+      const text = block.data.text;
+      switch (block.type) {
+        case "heading":
+          return `<h2>${text}</h2>`;
+        case "quote":
+          return `<blockquote><p>${text}</p></blockquote>`;
+        case "code":
+          return `<pre><code>${text}</code></pre>`;
+        case "paragraph":
+        default:
+          return `<p>${text}</p>`;
+      }
+    })
+    .join("");
+}
+
 const parser = new DOMParser();
 
 function toPlainText(s) {
   s = s.replace(/<br ?\/?>(?=.)/g, "\n"); // convert br tags to line break (except at the end)
   return parser.parseFromString(s, "text/html").documentElement.textContent; // decodes all HTML entities
+}
+
+export function countCharsHtml(html) {
+  if (!html) return 0;
+  return toPlainText(html).length;
+}
+
+export function countWordsHtml(html) {
+  if (!html) return 0;
+  return countWords(html);
 }
 
 export function countChars(s) {

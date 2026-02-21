@@ -17,28 +17,47 @@ const toMarkdown = text => {
     .replace(/&amp;/g, "&");
 };
 
-export default async project => {
-  const blockMapper = currentBlock => {
-    if (!currentBlock.data) return [];
+const parser = new DOMParser();
 
-    let text = currentBlock.data.text.replace(/(\s|<br \/>)+$/, "").trim(); // trim trailing whitespace
+/**
+ * Convert an HTML string to Markdown by walking the DOM nodes.
+ */
+const htmlToMarkdown = html => {
+  if (!html) return "";
+  const doc = parser.parseFromString(html, "text/html");
+  const nodes = doc.body.childNodes;
+  let result = "";
 
-    switch (currentBlock.type) {
-      case "paragraph":
-        return `${toMarkdown(smartenText(text))}\n\n`;
-      case "quote":
-        return `> ${toMarkdown(smartenText(text))}\n\n`;
-      case "heading":
-        return `### ${toMarkdown(smartenText(text))}\n\n`;
-      case "code":
-        return `\`\`\`\n${toMarkdown(text)}\n\`\`\`\n\n`;
+  for (const node of nodes) {
+    if (node.nodeType !== 1) continue; // skip non-element nodes
+    const tag = node.tagName.toLowerCase();
+    const text = node.innerHTML.replace(/(\s|<br\s*\/?>)+$/, "").trim();
+
+    switch (tag) {
+      case "h1":
+      case "h2":
+      case "h3":
+        result += `### ${toMarkdown(smartenText(text))}\n\n`;
+        break;
+      case "blockquote":
+        // blockquote may contain <p> children
+        result += `> ${toMarkdown(smartenText(node.textContent.trim()))}\n\n`;
+        break;
+      case "pre":
+        result += `\`\`\`\n${toMarkdown(node.textContent)}\n\`\`\`\n\n`;
+        break;
+      case "p":
       default:
-        return `${toMarkdown(text)}\n\n`;
+        result += `${toMarkdown(smartenText(text))}\n\n`;
+        break;
     }
-  };
+  }
 
-  const sceneMapper = currentScene =>
-    currentScene.content.blocks.flatMap(blockMapper).join("");
+  return result;
+};
+
+export default async project => {
+  const sceneMapper = currentScene => htmlToMarkdown(currentScene.content);
 
   const chapterMapper = currentChapter => {
     return (

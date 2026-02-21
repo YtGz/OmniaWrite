@@ -4,24 +4,9 @@
   import { push } from "@keenmate/svelte-spa-router";
   import { settings } from "../stores";
   import { Select, Checkbox, Range } from "../components/Forms";
-  import OmniaEditor from "omnia-editor";
+  import { OmniaEditor } from "@ytgz/omnia-editor";
 
-  const preview = {
-    blocks: [
-      {
-        type: "paragraph",
-        data: {
-          text: `Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy
-                    eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam
-                    voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet
-                    clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit
-                    amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
-                    nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed
-                    diam voluptua amet.`,
-        },
-      },
-    ],
-  };
+  const preview = `<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua amet.</p>`;
 
   let themes = $derived([
     {
@@ -77,7 +62,7 @@
     helper={$_('settings.helpers.fontsize')} />
 
   <div class="preview">
-    <OmniaEditor data={preview} active={false} />
+    <OmniaEditor value={preview} />
   </div>
   <br />
   <small class="link" onclick={() => push('/thirdparty')}>
