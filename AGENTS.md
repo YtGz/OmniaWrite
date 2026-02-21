@@ -10,10 +10,11 @@ OmniaWrite is a text editor engineered for creative writing. It's a cross-platfo
 - **Mobile** (Android via Capacitor)
 
 **Tech Stack:**
-- **Frontend**: Svelte 3 with svelte-spa-router
-- **Styling**: SCSS with svelte-preprocess
-- **Bundler**: Webpack 4
-- **Testing**: Jest + @testing-library/svelte
+- **Frontend**: Svelte 5 (runes mode) with @keenmate/svelte-spa-router
+- **Styling**: SCSS via vitePreprocess
+- **Bundler**: Vite 7 (run via Bun)
+- **Runtime**: Bun
+- **Testing**: Vitest + @testing-library/svelte
 - **Component Documentation**: Storybook 6
 - **Cloud Backend**: Appwrite SDK
 
@@ -21,31 +22,32 @@ OmniaWrite is a text editor engineered for creative writing. It's a cross-platfo
 
 ```bash
 # Development
-npm run dev                 # Start dev server with HMR
+bun run dev                 # Start Vite dev server on port 8080
 
 # Build
-npm run build               # Production build (with license prep)
-npm run svelte-build        # Build Svelte only (no license step)
-npm run build:cap           # Build + sync Capacitor for mobile
+bun run build               # Production build (with license prep)
+bun run svelte-build        # Build Svelte only (no license step)
+bun run build:cap           # Build + sync Capacitor for mobile
+bun run preview             # Preview production build
 
 # Testing
-npm test                    # Run Jest tests
-node ./tests/langcompare.js # Check translation completeness
+bun run test                # Run Vitest tests
+node ./tests/langcompare.cjs # Check translation completeness
 
 # Linting & Formatting
-npm run lint                # ESLint on src/
-npm run prettier            # Format all src/ files
+bun run lint                # ESLint on src/
+bun run prettier            # Format all src/ files
 
 # Electron
-npm run electron            # Build then run Electron app
-npm run pure-electron       # Run Electron without rebuild
+bun run electron            # Build then run Electron app
+bun run pure-electron       # Run Electron without rebuild
 
 # Storybook
-npm run storybook           # Start Storybook on port 6006
-npm run build-storybook     # Build static Storybook
+bun run storybook           # Start Storybook on port 6006
+bun run build-storybook     # Build static Storybook
 
 # Capacitor
-npm run cap:sync            # Sync web build to native platforms
+bun run cap:sync            # Sync web build to native platforms
 ```
 
 ## Project Structure
@@ -54,7 +56,7 @@ npm run cap:sync            # Sync web build to native platforms
 src/
 ├── main.js              # App entry point
 ├── App.svelte           # Root component with routing
-├── stores.js            # Svelte stores (projects, chapters, scenes, etc.)
+├── stores.js            # Svelte writable stores (appState, projects, chapters, etc.)
 ├── appwrite.js          # Cloud backend API wrapper
 ├── bridge.js            # Platform detection (Electron/Capacitor/Web)
 ├── utils.js             # Utility functions (text processing, formatting)
@@ -79,14 +81,20 @@ src/
 └── stories/             # Storybook decorators
 
 api/                     # Serverless API functions (Vercel)
-public/                  # Static assets and index.html
+public/                  # Static assets (icons, manifest, splash)
+index.html               # Vite entry point (project root)
+vite.config.js           # Vite configuration
+vitest.config.js         # Vitest test configuration
+resources/               # Electron app icon
 android/                 # Capacitor Android project
 tests/                   # Test utilities
 ```
 
 ## Code Patterns & Conventions
 
-### Svelte Components
+### Svelte 5 Components
+
+This project uses **Svelte 5 with runes**. All components use runes syntax.
 
 **File organization** (enforced by Prettier):
 ```svelte
@@ -101,34 +109,55 @@ tests/                   # Test utilities
 </style>
 ```
 
-**Component props:**
+**Component props (runes):**
 ```javascript
-export let color;
-export let loading = false;  // Default values
-export let disabled = false;
+let { color, loading = false, disabled = false, children } = $props();
 ```
 
-**Event forwarding:**
+**Local reactive state:**
+```javascript
+let count = $state(0);
+let doubled = $derived(count * 2);
+```
+
+**Event handlers:**
 ```svelte
-<button on:click|preventDefault>
+<button type="button" onclick={handleClick}>
+```
+
+**Bindable props:**
+```javascript
+let { show = $bindable(false) } = $props();
+```
+
+**Snippets (replaces slots):**
+```svelte
+{@render children?.()}
+{@render header?.()}
 ```
 
 ### State Management
 
-All app state lives in `src/stores.js` using Svelte writable stores with localStorage persistence:
+App state lives in `src/stores.js` using Svelte writable stores with localStorage persistence.
+
+**Important:** The state store is exported as `appState` (not `state`) to avoid conflicts with the `$state` rune.
 
 ```javascript
 // Main stores
-import { state, projects, chapters, scenes, tabs, cards, settings, intern, ui } from "./stores";
+import { appState, projects, chapters, scenes, tabs, cards, settings, intern, ui } from "./stores";
 
-// Reading store values
-$projects  // Reactive subscription in Svelte
-get(projects)  // One-time read (import { get } from "svelte/store")
+// Reading store values in Svelte components
+$projects  // Reactive subscription
+$appState.currentProject  // Access state properties
+
+// One-time read in JS
+import { get } from "svelte/store";
+get(projects)
 
 // Store methods
 projects.createProject(title, author, description, publisher, language);
 scenes.setSceneContent(id, content);
-state.setCurrentProject(projectId);
+appState.setCurrentProject(projectId);
 ```
 
 **Data hierarchy:**
@@ -138,16 +167,17 @@ state.setCurrentProject(projectId);
 
 ### Routing
 
-Uses `svelte-spa-router` with hash-based routing:
+Uses `@keenmate/svelte-spa-router` with hash-based routing:
 
 ```javascript
-import Router, { push, replace, location } from "svelte-spa-router";
+import Router, { push, replace, location } from "@keenmate/svelte-spa-router";
+import active from "@keenmate/svelte-spa-router/active";
 
 // Navigate programmatically
 push("/write/" + sceneId);
 
 // Route params
-export let params = {};  // { sceneId: "123" }
+let { params } = $props();
 ```
 
 **Route definitions in App.svelte:**
@@ -179,7 +209,7 @@ locale.set($settings.language);
 
 When adding new strings:
 1. Add to `src/lang/en.json` first
-2. Run `node ./tests/langcompare.js` to see missing translations in other languages
+2. Run `node ./tests/langcompare.cjs` to see missing translations in other languages
 
 ### Platform Detection
 
@@ -196,12 +226,12 @@ if (isRunningCapacitor) {
 
 ### Styling
 
-- SCSS with preprocessor
+- SCSS via vitePreprocess
 - CSS custom properties for theming (`--background-color`, `--text-color`, etc.)
-- Device-specific styles via mixins:
+- Use `@use` (not `@import`) for SCSS modules:
 
 ```scss
-@import "css/mixins/devices";
+@use "css/mixins/devices" as *;
 
 .container {
   // Mobile-first styles
@@ -214,9 +244,17 @@ if (isRunningCapacitor) {
 
 **Themes:** `dark` and `light` applied as body class.
 
+### Accessibility
+
+All interactive elements must use semantic HTML:
+- Use `<button type="button">` for clickable actions, not `<div>` or `<span>`
+- Use `<a href="...">` for navigation links
+- Add `aria-label` to icon-only buttons
+- Use `role="presentation"` for decorative backdrops with click handlers
+
 ## Testing Patterns
 
-Tests use Jest with @testing-library/svelte:
+Tests use Vitest with @testing-library/svelte:
 
 ```javascript
 import { render, fireEvent } from "@testing-library/svelte";
@@ -224,7 +262,7 @@ import html from "svelte-htm";
 import Button from "./Button.svelte";
 
 test("events should work", () => {
-  const mock = jest.fn();
+  const mock = vi.fn();
   const { getByText } = render(
     html`<${Button} color="green" on:click=${mock}>Button<//>`
   );
@@ -235,7 +273,7 @@ test("events should work", () => {
 
 **Test file location:** Co-located with components (e.g., `Button.test.js` next to `Button.svelte`)
 
-**Mocks required:** Jest config mocks static assets (see `jest.config.js`)
+**Config files:** `vitest.config.js` (test config), `vitest-setup.js` (setup)
 
 ## Storybook
 
@@ -273,30 +311,43 @@ await cloud.restoreBackup(backupId);
 await cloud.getAllBackups();
 ```
 
+**Environment variables** (handled by Vite `define`):
+- `APPWRITE_ENDPOINT` — Appwrite server URL
+- `APPWRITE_PROJECT` — Project ID
+- `APPWRITE_BUCKET_ID` — Storage bucket for backups
+
 ## CI/CD
 
-GitHub Actions workflows:
-- `test.yml` - Runs on push/PR: `npm test` and `node ./tests/langcompare.js`
-- `lint.yml` - Runs ESLint on PRs
-- `build.yml` - Electron builds on all platforms, releases on version tags
+GitHub Actions workflows (all use `oven-sh/setup-bun`):
+- `test.yml` — Runs on push/PR: `bun run test` and `node ./tests/langcompare.cjs`
+- `lint.yml` — Runs ESLint on PRs
+- `build.yml` — Electron builds on all platforms, releases on version tags
 
 ## Important Gotchas
 
-1. **Svelte 3**: This project uses Svelte 3, not Svelte 5. Don't use runes (`$state`, `$derived`, etc.).
+1. **Svelte 5 runes**: This project uses Svelte 5 with runes (`$state`, `$derived`, `$effect`, `$props`, `$bindable`). Do not use Svelte 3/4 patterns (`export let`, `on:click`, `<slot>`).
 
-2. **localStorage-based state**: All data is stored in localStorage. The stores auto-persist on subscription changes.
+2. **Store naming**: The state store is `appState`, not `state`. Using `state` as a variable name conflicts with the `$state` rune.
 
-3. **ID generation**: Uses random numbers (0-999999). Check `doesIdExist()` in stores.js to avoid collisions.
+3. **localStorage-based state**: All data is stored in localStorage. The stores auto-persist on subscription changes.
 
-4. **Service worker**: Only registers in production web builds (not localhost, Electron, or Capacitor).
+4. **ID generation**: Uses random numbers (0-999999). Check `doesIdExist()` in stores.js to avoid collisions.
 
-5. **ESLint ignores test files**: Test files (`*.test.js`) and `public/` are excluded from linting.
+5. **Service worker**: Only registers in production web builds (not localhost, Electron, or Capacitor).
 
-6. **Webpack 4**: Not Webpack 5. Some newer features/syntax may not work.
+6. **ESLint ignores test files**: Test files (`*.test.js`) and `public/` are excluded from linting.
 
-7. **Editor component**: The main editor is `omnia-editor`, a separate npm package.
+7. **ESM package**: `package.json` has `"type": "module"`. CommonJS files must use `.cjs` extension (e.g., `electron.cjs`, `langcompare.cjs`).
 
-8. **Export APIs**: Export functionality uses serverless functions in `/api/` (deployed to Vercel).
+8. **Editor component**: The main editor is `@ytgz/omnia-editor`, installed from a local tarball.
+
+9. **Export APIs**: Export functionality uses serverless functions in `/api/` (deployed to Vercel).
+
+10. **Build output**: Vite outputs to `build/` (not `public/`). Static assets in `public/` are copied as-is.
+
+11. **SCSS**: Use `@use` not `@import`. Sass `@import` is deprecated and will be removed in Dart Sass 3.0.
+
+12. **svelte-spa-router active**: Import as default: `import active from "@keenmate/svelte-spa-router/active"` (not named export).
 
 ## Code Style (Prettier)
 
@@ -333,17 +384,6 @@ Use [Conventional Commits](https://www.conventionalcommits.org/) format:
 - `test` - Adding or updating tests
 - `chore` - Build process, dependencies, tooling
 
-**Examples:**
-```bash
-feat(editor): add word count display
-fix(cloud): handle backup restore timeout
-docs(readme): update installation steps
-style(components): format Button with prettier
-refactor(stores): simplify scene content update
-test(Button): add disabled state test
-chore(deps): upgrade svelte to 3.35.0
-```
-
 **Scope** (optional): Component or area affected (e.g., `editor`, `cloud`, `sidebar`, `stores`, `i18n`)
 
 ## Adding New Features
@@ -355,11 +395,12 @@ chore(deps): upgrade svelte to 3.35.0
 
 ### New Component
 1. Create `.svelte` file in appropriate `src/components/` folder
-2. Add `.stories.js` for Storybook documentation
-3. Add `.test.js` for unit tests
-4. Export from `index.js` if part of a component group
+2. Use Svelte 5 runes: `$props()`, `$state()`, `$derived()`, `$effect()`
+3. Add `.stories.js` for Storybook documentation
+4. Add `.test.js` for unit tests
+5. Export from `index.js` if part of a component group
 
 ### New Translation Key
 1. Add to `src/lang/en.json`
 2. Use with `{$_('path.to.key')}`
-3. Run `node ./tests/langcompare.js` to check coverage
+3. Run `node ./tests/langcompare.cjs` to check coverage

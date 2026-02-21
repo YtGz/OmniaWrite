@@ -470,11 +470,11 @@ export const ui = writable({
   },
 });
 
-const updateLocalTimestamp = () => {
-  state.updateLocalTimestamp();
-};
-
 export const appState = storeState();
+
+const updateLocalTimestamp = () => {
+  appState.updateLocalTimestamp();
+};
 export const projects = storeProjects();
 export const chapters = storeChapters();
 export const scenes = storeScenes();
@@ -494,7 +494,7 @@ projects.subscribe(val =>
 chapters.subscribe(val =>
   localStorage.setItem("chapters", JSON.stringify(val))
 );
-state.subscribe(val => localStorage.setItem("state", JSON.stringify(val)));
+appState.subscribe(val => localStorage.setItem("state", JSON.stringify(val)));
 tabs.subscribe(val => localStorage.setItem("tabs", JSON.stringify(val)));
 scenes.subscribe(val => localStorage.setItem("scenes", JSON.stringify(val)));
 cards.subscribe(val => localStorage.setItem("cards", JSON.stringify(val)));
