@@ -2,15 +2,17 @@
   let { title, action = false, onclick, children } = $props();
 </script>
 
-<div class="grid-element" class:action {onclick}>
+<button type="button" class="grid-element" class:action {onclick}>
   {#if title}
     <h2>{title}</h2>
   {/if}
   {@render children?.()}
-</div>
+</button>
 
 <style lang="scss">
   .grid-element {
+    font: inherit;
+    text-align: left;
     background: var(--background-color);
     border: 1px solid rgba(0, 0, 0, 0.3);
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);

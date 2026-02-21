@@ -1,6 +1,6 @@
 <script>
   import { fade } from "svelte/transition";
-  import { state } from "../stores";
+  import { appState } from "../stores";
   import { _ } from "svelte-i18n";
   import { Grid, GridElement } from "../components/Grid";
 
@@ -29,10 +29,13 @@
 
 <Modal bind:show={selected}>
   {#snippet header()}<h2>{selectedComponent.title}</h2>{/snippet}
-  <svelte:component this={selectedComponent.component} />
+  {#if selectedComponent?.component}
+    {@const Component = selectedComponent.component}
+    <Component />
+  {/if}
 </Modal>
 <div class="export" in:fade={{ duration: 100 }}>
-  {#if $state.currentProject}
+  {#if $appState.currentProject}
     <Grid>
       <GridElement
         onclick={() => ([selected, selectedComponent] = [true, { title: $_('export.cloud.title'), component: Cloud }])}>

@@ -32,9 +32,9 @@
         {$_('install.action')}
       </Button>
     </ButtonGroup>
-    <p class="link" onclick={() => (showDisclaimer = true)}>
+    <button type="button" class="link" onclick={() => (showDisclaimer = true)}>
       {$_('install.disclaimer.show')}
-    </p>
+    </button>
   </div>
 </Modal>
 

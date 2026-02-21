@@ -1,5 +1,5 @@
 <script>
-  import { state, chapters, scenes } from "../stores";
+  import { appState, chapters, scenes } from "../stores";
   import { fly } from "svelte/transition";
   import { _ } from "svelte-i18n";
   import tippy from "sveltejs-tippy";
@@ -58,7 +58,7 @@
 {/if}
 
 {#if modals.editProject}
-  <EditProject bind:show={modals.editProject} id={$state.currentProject} />
+  <EditProject bind:show={modals.editProject} id={$appState.currentProject} />
 {/if}
 <CreateChapter bind:show={modals.createChapter} />
 <CreateScene
@@ -80,9 +80,9 @@
     <ul class="menu">
       <Backdrop bind:state={sidebarState} />
       <Close bind:state={sidebarState} />
-      {#if $state.currentProject}
+      {#if $appState.currentProject}
         {#each $chapters
-          .filter(chapter => chapter.project == $state.currentProject)
+          .filter(chapter => chapter.project == $appState.currentProject)
           .sort((a, b) => a.order - b.order) as chapter, i}
           <Chapter {chapter} onedit={editChapter}>
             {#each $scenes
@@ -99,42 +99,49 @@
           </Chapter>
         {:else}
           <Placeholder>
-            <div
+            <button
+              type="button"
               class="placeholder-chapters"
               use:tippy={{ content: $_('sidebar.createChapter'), placement: 'bottom' }}
               onclick={() => (modals.createChapter = true)}>
               {$_('sidebar.placeholderChapters')}
-            </div>
+            </button>
           </Placeholder>
         {/each}
       {:else}
         <Placeholder />
       {/if}
     </ul>
-    {#if $state.currentProject}
+    {#if $appState.currentProject}
       <div class="actions">
-        <div
+        <button
+          type="button"
+          aria-label="Edit project"
           use:tippy={{ content: $_('sidebar.editProject'), placement: 'top' }}
           onclick={() => (modals.editProject = true)}>
           <span class="lnr lnr-cog collapse"></span>
-        </div>
-        <div
+        </button>
+        <button
+          type="button"
+          aria-label="Edit order"
           use:tippy={{ content: $_('sidebar.editOrder'), placement: 'top' }}
           onclick={() => (modals.reArrange = true)}>
           <span class="lnr lnr-line-spacing collapse"></span>
-        </div>
-        <div
+        </button>
+        <button
+          type="button"
+          aria-label="Create chapter"
           use:tippy={{ content: $_('sidebar.createChapter'), placement: 'top' }}
           onclick={() => (modals.createChapter = true)}>
           <span class="lnr lnr-plus-circle collapse"></span>
-        </div>
+        </button>
       </div>
     {/if}
   </div>
 {/if}
 
 <style lang="scss">
-  @import "../css/mixins/devices";
+  @use "../css/mixins/devices" as *;
 
   .sidebar {
     scrollbar-color: rgb(13, 19, 22) rgb(25, 38, 44);
@@ -173,7 +180,11 @@
         width: 100%;
       }
 
-      div {
+      button {
+        background: none;
+        border: none;
+        color: inherit;
+        font: inherit;
         margin: auto;
         cursor: pointer;
         width: 100%;
@@ -200,7 +211,12 @@
       overflow-y: auto;
 
       .placeholder-chapters {
+        background: none;
+        border: none;
+        color: inherit;
+        font: inherit;
         cursor: pointer;
+        padding: 0;
       }
 
       @include desktop {

@@ -2,7 +2,7 @@
   import { onDestroy, onMount } from "svelte";
   import { get } from "svelte/store";
   import { _ } from "svelte-i18n";
-  import { chapters, scenes, state } from "../../stores";
+  import { chapters, scenes, appState } from "../../stores";
 
   import Sortable, {
     AutoScroll,
@@ -83,7 +83,7 @@
   {#snippet header()}<h2>{$_('sidebar.editOrder')}</h2>{/snippet}
   <ul id="order" class="chapters">
     {#each get(chapters)
-      .filter(chapter => chapter.project == $state.currentProject)
+      .filter(chapter => chapter.project == $appState.currentProject)
       .sort((a, b) => a.order - b.order) as chapter, i}
       <li class="parent" class:open={chapter.ui.open} data-id={chapter.id}>
         <span>{chapter.title}</span>

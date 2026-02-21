@@ -1,7 +1,7 @@
 <script>
   import { onMount } from "svelte";
   import { _ } from "svelte-i18n";
-  import { state } from "../stores";
+  import { appState } from "../stores";
   import { reloadWindow } from "../bridge";
   import cloud from "../appwrite";
   import Modal from "./Modal.svelte";
@@ -18,7 +18,7 @@
     if (latest.files.length === 0) return;
 
     const latestTimestamp = new Date(latest.files[0].$createdAt).getTime() / 1000;
-    show = $state.lastCloudSave < latestTimestamp;
+    show = $appState.lastCloudSave < latestTimestamp;
   });
 
   const download = () => {
@@ -55,14 +55,16 @@
     </center>
   {:else}
     <ul>
-      <li onclick={download}>
-        <span class="from-now">
-          {formatDistance(getTimestamp(latest.files[0]))}
-        </span>
-        <span class="file-size">
-          {formatBytes(latest.files[0].sizeOriginal)}
-        </span>
-        <span class="lnr lnr-cloud-download"></span>
+      <li>
+        <button type="button" onclick={download}>
+          <span class="from-now">
+            {formatDistance(getTimestamp(latest.files[0]))}
+          </span>
+          <span class="file-size">
+            {formatBytes(latest.files[0].sizeOriginal)}
+          </span>
+          <span class="lnr lnr-cloud-download"></span>
+        </button>
       </li>
     </ul>
     <p class="hint">{$_('common.modals.newBackup.warning')}</p>
@@ -76,6 +78,10 @@
     margin-block-end: 0;
   }
   ul li {
+    list-style: none;
+  }
+
+  ul li button {
     padding: 2rem 1rem;
     display: flex;
     justify-content: space-between;
@@ -83,9 +89,15 @@
     transition: all 0.5s ease;
     max-width: 800px;
     cursor: pointer;
+    background: none;
+    border: none;
+    color: inherit;
+    font: inherit;
+    width: 100%;
+    text-align: left;
   }
 
-  ul li:hover {
+  ul li button:hover {
     background-color: rgba(255, 255, 255, 0.1);
   }
 

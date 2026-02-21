@@ -3,10 +3,10 @@
   import { link, location } from "@keenmate/svelte-spa-router";
   import active from "@keenmate/svelte-spa-router/active";
 
-  import { state, tabs, scenes } from "../../stores";
+  import { appState, tabs, scenes } from "../../stores";
 
   const createTab = () => {
-    tabs.createTab($state.currentProject, location());
+    tabs.createTab($appState.currentProject, location());
   };
 
   const getTitle = location => {
@@ -23,17 +23,21 @@
 
 <div class="tabs" style="-webkit-app-region: no-drag">
   <ul>
-    {#each $tabs.filter(tabs => tabs.project == $state.currentProject) as tab}
+    {#each $tabs.filter(tabs => tabs.project == $appState.currentProject) as tab}
       <li class="tab" use:active={tab.link}>
         <a href={tab.link} use:link>{getTitle(tab.link)}</a>
-        <span
+        <button
+          type="button"
           class="lnr lnr-cross tab-action"
-          onclick={() => tabs.removeTab(tab.id)}></span>
+          aria-label="Close tab"
+          onclick={() => tabs.removeTab(tab.id)}></button>
       </li>
     {/each}
     {#if location() != '/write/' && location().includes('write') && !$tabs.some(tab => tab.link == location())}
-      <li class="tab new" onclick={createTab}>
-        <span class="lnr lnr-plus-circle"></span>
+      <li class="tab new">
+        <button type="button" class="tab-btn" aria-label="Add tab" onclick={createTab}>
+          <span class="lnr lnr-plus-circle"></span>
+        </button>
       </li>
     {/if}
   </ul>
@@ -75,11 +79,24 @@
           font-size: 1rem;
         }
 
-        .tab-action:hover {
-          color: #4aaed9;
+        .tab-action {
+          background: none;
+          border: none;
+          color: inherit;
+          padding: 0;
+          cursor: pointer;
+
+          &:hover {
+            color: #4aaed9;
+          }
         }
 
-        .new {
+        .tab-btn {
+          background: none;
+          border: none;
+          color: inherit;
+          font: inherit;
+          padding: 0;
           cursor: pointer;
         }
 

@@ -7,18 +7,18 @@
   let { scene, onedit } = $props();
 </script>
 
-<li
-  use:active={'/write/' + scene.id}
-  onclick={(e) => { if (e.target === e.currentTarget) push('/write/' + scene.id); }}>
+<li use:active={'/write/' + scene.id}>
   <a href="#/write/{scene.id}">{scene.title}</a>
-  <span
+  <button
+    type="button"
     class="lnr lnr-cog action"
+    aria-label="Edit scene"
     use:tippy={{ content: $_('sidebar.editScene'), placement: 'right' }}
-    onclick={() => onedit?.(scene)}></span>
+    onclick={() => onedit?.(scene)}></button>
 </li>
 
 <style lang="scss">
-  @import "../../css/mixins/devices";
+  @use "../../css/mixins/devices" as *;
 
   li {
     padding: 0.5rem 0 0.5rem 2rem;
@@ -26,12 +26,17 @@
     line-height: 1.5rem;
 
     a,
-    span {
+    button {
       text-decoration: none;
       opacity: 0.65;
     }
 
     .action {
+      background: none;
+      border: none;
+      color: inherit;
+      padding: 0;
+      cursor: pointer;
       visibility: visible;
       float: right;
       margin-right: 1em;

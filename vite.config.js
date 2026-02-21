@@ -2,7 +2,14 @@ import { defineConfig } from "vite";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 
 export default defineConfig({
-  plugins: [svelte()],
+  plugins: [
+    svelte({
+      experimental: {
+        // sveltejs-tippy has a svelte field but no exports condition
+        disableSvelteResolveWarnings: true,
+      },
+    }),
+  ],
   resolve: {
     conditions: ["svelte", "browser", "import"],
   },

@@ -7,17 +7,24 @@
 </script>
 
 <li class:open={chapter.ui.open}>
-  <span
+  <button
+    type="button"
     class="key"
-    onclick={(e) => { if (e.target === e.currentTarget) chapters.toggleChapterInSidebar(chapter.id); }}>
+    onclick={() => chapters.toggleChapterInSidebar(chapter.id)}>
     {chapter.title}
-    <span
-      class="lnr lnr-chevron-up collapse"
-      onclick={(e) => { if (e.target === e.currentTarget) chapters.toggleChapterInSidebar(chapter.id); }}></span>
-    <span
-      class="lnr lnr-cog action"
+  </button>
+  <span class="key-actions">
+    <button
+      type="button"
+      class="lnr lnr-chevron-up collapse icon-btn"
+      aria-label="Toggle chapter"
+      onclick={() => chapters.toggleChapterInSidebar(chapter.id)}></button>
+    <button
+      type="button"
+      class="lnr lnr-cog action icon-btn"
+      aria-label="Edit chapter"
       use:tippy={{ content: $_('sidebar.editChapter'), placement: 'right' }}
-      onclick={() => onedit?.(chapter)}></span>
+      onclick={() => onedit?.(chapter)}></button>
   </span>
   {#if chapter.ui.open}
     <ul class="scenes">
@@ -27,63 +34,88 @@
 </li>
 
 <style lang="scss">
-  @import "../../css/mixins/devices";
+  @use "../../css/mixins/devices" as *;
 
   li {
     cursor: pointer;
     display: block;
     width: 100%;
     word-break: break-word;
+    position: relative;
 
     span {
       text-decoration: none;
       opacity: 0.65;
     }
 
+    .icon-btn {
+      background: none;
+      border: none;
+      color: inherit;
+      padding: 0;
+      cursor: pointer;
+    }
+
     .key {
       display: block;
       padding: 1rem;
       font-weight: bold;
+      background: none;
+      border: none;
+      color: inherit;
+      font: inherit;
+      cursor: pointer;
+      text-align: left;
+      width: 100%;
+    }
 
-      .collapse {
-        float: right;
-        transform: rotate(-90deg);
+    .key-actions {
+      position: absolute;
+      right: 0;
+      top: 0;
+      padding: 1rem;
+    }
 
-        &:hover {
-          opacity: 1;
-        }
+    .collapse {
+      float: right;
+      transform: rotate(-90deg);
+
+      &:hover {
+        opacity: 1;
       }
+    }
 
-      .action {
-        visibility: visible;
-        float: right;
-        margin-right: 1em;
-        opacity: 0.65;
-        transition: transform 0.2s;
+    .action {
+      visibility: visible;
+      float: right;
+      margin-right: 1em;
+      opacity: 0.65;
+      transition: transform 0.2s;
 
-        @include desktop {
-          visibility: hidden;
-        }
-
-        &:hover {
-          opacity: 1;
-          transform: scale(1.25);
-        }
+      @include desktop {
+        visibility: hidden;
       }
 
       &:hover {
         opacity: 1;
-        background-color: var(--menu-hover);
+        transform: scale(1.25);
+      }
+    }
 
-        @include desktop {
-          .action {
-            visibility: visible;
-          }
+    &:hover {
+      .key {
+        opacity: 1;
+        background-color: var(--menu-hover);
+      }
+
+      @include desktop {
+        .action {
+          visibility: visible;
         }
       }
     }
     &.open {
-      .key .collapse {
+      .collapse {
         transform: rotate(0deg);
       }
     }

@@ -1,7 +1,7 @@
 <script>
   import { onMount, onDestroy } from "svelte";
   import { fade } from "svelte/transition";
-  import { scenes, chapters, cards, state, settings, ui } from "../stores";
+  import { scenes, chapters, cards, appState, settings, ui } from "../stores";
   import { push } from "@keenmate/svelte-spa-router";
   import { _ } from "svelte-i18n";
   import { OmniaEditor } from "@ytgz/omnia-editor";
@@ -19,7 +19,7 @@
   let currentScene = $derived($scenes.find(scene => scene.id == routeParams.sceneId));
 
   $effect(() => {
-    state.setCurrentTitle(
+    appState.setCurrentTitle(
       routeParams.sceneId ? currentScene.title : "No scene selected!"
     );
   });
@@ -45,7 +45,7 @@
     scenes.setSceneContent(routeParams.sceneId, html);
     editorStatus = 2;
     filteredCards = $cards
-      .filter(c => c.showTooltip && c.project == $state.currentProject)
+      .filter(c => c.showTooltip && c.project == $appState.currentProject)
       .filter(c => html.includes(c.title));
   };
 
@@ -68,7 +68,7 @@
 </script>
 
 <div in:fade={{ duration: 100 }}>
-  {#if $state.currentProject}
+  {#if $appState.currentProject}
     {#if routeParams.sceneId !== null}
       <Modal bind:show={showCards}>
         {#snippet header()}<h2>{$_('write.toolbar.cards')}</h2>{/snippet}
@@ -86,22 +86,25 @@
       <div class="toolbar">
         <div class="inner">
           <div>
-            <span
-              class="lnr lnr-undo"
+            <button
+              type="button"
+              class="lnr lnr-undo toolbar-btn" aria-label="Undo"
               use:tippy={{ content: $_('write.toolbar.undo'), placement: 'bottom' }}
-              onclick={undo}></span>
-            <span
-              class="lnr lnr-redo"
+              onclick={undo}></button>
+            <button
+              type="button"
+              class="lnr lnr-redo toolbar-btn" aria-label="Redo"
               use:tippy={{ content: $_('write.toolbar.redo'), placement: 'bottom' }}
-              onclick={redo}></span>
+              onclick={redo}></button>
           </div>
           <div>
             {#if filteredCards.length > 0}
-              <span
+              <button
+                type="button"
                 transition:fade={{ duration: 100 }}
-                class="lnr lnr-bookmark"
+                class="lnr lnr-bookmark toolbar-btn" aria-label="Cards"
                 use:tippy={{ content: $_('write.toolbar.cards'), placement: 'bottom' }}
-                onclick={() => (showCards = true)}></span>
+                onclick={() => (showCards = true)}></button>
             {/if}
             {#if $ui.focus}
               <select
@@ -111,7 +114,7 @@
                 class="lnr"
                 use:tippy={{ content: $_('write.toolbar.switchScene'), placement: 'bottom' }}>
                 <option value="" selected="selected">&#xe871;</option>
-                {#each $chapters.filter(chapter => chapter.project == $state.currentProject) as chapter}
+                {#each $chapters.filter(chapter => chapter.project == $appState.currentProject) as chapter}
                   <optgroup label={chapter.title}>
                     {#each $scenes.filter(scene => scene.chapter == chapter.id) as scene}
                       <option value={scene.id}>{scene.title}</option>
@@ -122,12 +125,14 @@
             {/if}
           </div>
           <div>
-            <span
-              class="lnr"
+            <button
+              type="button"
+              class="lnr toolbar-btn"
+              aria-label="Toggle focus"
               use:tippy={{ content: $_('write.toolbar.focus'), placement: 'bottom' }}
               onclick={toggleFocus}
               class:lnr-eye={!$ui.focus}
-              class:lnr-exit={$ui.focus}></span>
+              class:lnr-exit={$ui.focus}></button>
             <span
               class="lnr"
               use:tippy={{ content: $_('write.toolbar.savestate'), placement: 'bottom' }}
@@ -225,6 +230,13 @@
           opacity: 1;
         }
         span {
+          font-size: 1rem;
+        }
+        .toolbar-btn {
+          background: none;
+          border: none;
+          color: inherit;
+          padding: 0;
           font-size: 1rem;
         }
         .lnr {

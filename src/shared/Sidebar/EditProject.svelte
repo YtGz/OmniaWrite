@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   import { get } from "svelte/store";
   import { _ } from "svelte-i18n";
-  import { projects, chapters, scenes, state } from "../../stores";
+  import { projects, chapters, scenes, appState } from "../../stores";
   import { reloadWindow } from "../../bridge";
   import { Input, Button, ButtonGroup, Select } from "../../components/Forms";
 
@@ -43,7 +43,7 @@
       projects.removeProject(project);
 
       scenes.removeAllScenes(project);
-      state.setCurrentProject(false);
+      appState.setCurrentProject(false);
       reloadWindow();
     }
   };

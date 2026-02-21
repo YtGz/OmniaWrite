@@ -3,7 +3,7 @@
   import { _ } from "svelte-i18n";
   import { push } from "@keenmate/svelte-spa-router";
   import { reloadWindow } from "../../bridge";
-  import { state } from "../../stores";
+  import { appState } from "../../stores";
 
   import {
     InputEmail,
@@ -37,7 +37,7 @@
     }
     cloud.login(form.email, form.pass).then(
       () => {
-        state.setLogin(true);
+        appState.setLogin(true);
         window.location.hash = "#/cloud";
         reloadWindow();
       },
@@ -50,7 +50,7 @@
   };
 </script>
 
-{#if !$state.isUserLoggedIn}
+{#if !$appState.isUserLoggedIn}
   <div in:fade={{ duration: 100 }}>
     <h2>{$_('cloud.login.title')}</h2>
     <Alert danger bind:show={showAlert}>
@@ -74,9 +74,9 @@
         </Button>
       </ButtonGroup>
     </form>
-    <small class="link" onclick={() => push('/cloud/reset-password')}>
-      {$_('cloud.reset.title')}
-    </small>
+    <a class="link" href="#/cloud/reset-password">
+      <small>{$_('cloud.reset.title')}</small>
+    </a>
     <h2>{$_('cloud.login.register')}</h2>
     <ButtonGroup>
       <Button onclick={() => push('/cloud/register')}>

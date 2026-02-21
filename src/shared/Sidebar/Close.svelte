@@ -3,19 +3,26 @@
 </script>
 
 {#if state}
-  <div
+  <button
+    type="button"
     class="close"
+    aria-label="Close"
     class:right
     onclick={() => (state = false)}
     style="-webkit-app-region: no-drag">
     <span class="lnr lnr-cross"></span>
-  </div>
+  </button>
 {/if}
 
 <style lang="scss">
-  @import "../../css/mixins/devices";
+  @use "../../css/mixins/devices" as *;
 
   .close {
+    background: none;
+    border: none;
+    color: inherit;
+    padding: 0;
+    cursor: pointer;
     font-size: 2rem;
     position: fixed;
     top: 0.5rem;

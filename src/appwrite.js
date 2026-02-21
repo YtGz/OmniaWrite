@@ -1,6 +1,6 @@
 import { Client, Account, Storage, ID, Query } from "appwrite";
 import { get } from "svelte/store";
-import { state, settings } from "./stores";
+import { appState, settings } from "./stores";
 
 const APP_ENDPOINT = process.env.APPWRITE_ENDPOINT;
 const APP_PROJECT = process.env.APPWRITE_PROJECT;
@@ -81,7 +81,7 @@ const cloud = {
     return account.updateVerification(id, token);
   },
   /**
-   * Login user and sets user ID in state.
+   * Login user and sets user ID in appState.
    * @param {string} user E-Mail
    * @param {string} pass Password
    * @returns Promise<session>
@@ -104,7 +104,7 @@ const cloud = {
    */
   setCloudTimestamp: id => {
     return storage.getFile(APP_BUCKET_ID, id).then(response => {
-      state.updateCloudTimestamp(new Date(response.$createdAt).getTime() / 1000);
+      appState.updateCloudTimestamp(new Date(response.$createdAt).getTime() / 1000);
     });
   },
   /**
@@ -136,7 +136,7 @@ const cloud = {
         new File([blob], `user:${cloud.currentUser}.json`)
       )
       .then(response => {
-        state.updateCloudTimestamp(new Date(response.$createdAt).getTime() / 1000);
+        appState.updateCloudTimestamp(new Date(response.$createdAt).getTime() / 1000);
         return response;
       });
   },

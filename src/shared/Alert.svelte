@@ -21,9 +21,9 @@
 
 {#if show}
   <div class="alert" class:danger class:success class:warning class:info>
-    <span class="closebtn" onclick={() => (show = false)}>
+    <button type="button" class="closebtn" aria-label="Close" onclick={() => (show = false)}>
       <span class="lnr lnr-cross"></span>
-    </span>
+    </button>
     {@render title?.()}
     {@render children?.()}
   </div>
@@ -51,6 +51,8 @@
   }
 
   .closebtn {
+    background: none;
+    border: none;
     color: white;
     float: right;
     line-height: 1rem;
@@ -58,6 +60,7 @@
     cursor: pointer;
     transition: 0.3s;
     opacity: 0.65;
+    padding: 0;
 
     &:hover {
       opacity: 1;

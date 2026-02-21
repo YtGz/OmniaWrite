@@ -8,7 +8,7 @@
     isRunningElectron,
     isRunningCapacitor,
   } from "./bridge";
-  import { state, settings, intern, ui } from "./stores";
+  import { appState, settings, intern, ui } from "./stores";
   import cloud from "./appwrite";
   import HeaderComponent from "./shared/Header.svelte";
   import SidebarComponent from "./shared/Sidebar.svelte";
@@ -32,7 +32,6 @@
   locale.set($settings.language);
 
   let { version } = $props();
-  console.log(`Version: ${version}`);
 
   const routes = {
     "/": OverviewRoute,
@@ -107,20 +106,21 @@
   cloud.isUserLoggedIn().then(
     user => {
       if (user["$id"]) {
-        state.setLogin(true);
+        appState.setLogin(true);
       } else {
-        state.setLogin(false);
+        appState.setLogin(false);
       }
     },
     () => {
-      state.setLogin(false);
+      appState.setLogin(false);
     }
   );
 
   onMount(() => {
+    console.log(`Version: ${version}`);
     if ($settings.lastLocation) {
-      if ($state.lastLocation) {
-        replace($state.lastLocation);
+      if ($appState.lastLocation) {
+        replace($appState.lastLocation);
       }
     }
     if ($intern.installed && version !== $intern.version) {
@@ -130,7 +130,7 @@
   });
 
   $effect(() => {
-    state.setCurrentLocation(location());
+    appState.setCurrentLocation(location());
   });
 
   /**
@@ -157,7 +157,7 @@
     <BrowserSupport />
     <Support />
     <NewUpdate bind:show={showChangelog} />
-    {#if $state.isUserLoggedIn}
+    {#if $appState.isUserLoggedIn}
       <NewBackup />
     {/if}
     {#if !$intern.installed}
@@ -181,7 +181,7 @@
 {/if}
 
 <style lang="scss">
-  @import "css/mixins/devices";
+  @use "css/mixins/devices" as *;
 
   .loading {
     width: 100vw;

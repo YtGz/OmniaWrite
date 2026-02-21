@@ -19,17 +19,21 @@
 </script>
 
 {#if show}
-  <div
+  <button
+    type="button"
     {onclick}
     in:fly={{ y: -100, duration: 500 }}
     out:fly={{ x: 100, duration: 500 }}>
     {@html text}
     {@render children?.()}
-  </div>
+  </button>
 {/if}
 
 <style type="scss">
-  div {
+  button {
+    border: none;
+    cursor: pointer;
+    font: inherit;
     width: 100%;
     background-color: var(--snackbar);
     color: var(--text-color);
@@ -41,7 +45,7 @@
     right: 0;
   }
   @media (min-width: 960px) {
-    div {
+    button {
       width: 18rem;
       border-radius: 1rem;
       bottom: 1rem;

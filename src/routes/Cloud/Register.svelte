@@ -101,9 +101,9 @@
         {$_('cloud.register.button')}
       </Button>
     </ButtonGroup>
-    <small class="link" onclick={() => (showPrivacyPolicy = true)}>
-      {$_('cloud.privacy.show')}
-    </small>
+    <button type="button" class="link" onclick={() => (showPrivacyPolicy = true)}>
+      <small>{$_('cloud.privacy.show')}</small>
+    </button>
     <h2>{$_('cloud.register.login')}</h2>
     <ButtonGroup>
       <Button onclick={() => push('/cloud')}>{$_('cloud.login.title')}</Button>

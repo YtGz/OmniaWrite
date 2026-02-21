@@ -1,6 +1,6 @@
 <script>
   import { fade } from "svelte/transition";
-  import { state, projects, chapters } from "../stores";
+  import { appState, projects, chapters } from "../stores";
   import { reloadWindow } from "../bridge";
   import { _ } from "svelte-i18n";
   import { Grid, GridElement } from "../components/Grid";
@@ -11,7 +11,7 @@
   let showCreateProject = $state(false);
 
   const changeProject = project => {
-    state.setCurrentProject(project);
+    appState.setCurrentProject(project);
     projects.updateProjectTimestamp(project);
     reloadWindow();
   };
@@ -32,7 +32,7 @@
   onchangeProject={(project) => changeProject(project)} />
 
 <div in:fade={{ duration: 100 }} class="overview">
-  {#each $projects.filter(project => project.id == $state.currentProject) as project}
+  {#each $projects.filter(project => project.id == $appState.currentProject) as project}
     <h1>{project.title}</h1>
     <ProjectOverview />
   {/each}

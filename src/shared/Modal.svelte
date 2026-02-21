@@ -21,7 +21,9 @@
 {#if show}
   <div
     class="modal-backdrop"
+    role="presentation"
     onclick={() => (persistent ? '' : (show = false))}
+    onkeydown={(e) => e.key === 'Escape' && !persistent && (show = false)}
     in:fade={{ duration: 200 }}
     out:fade={{ duration: 200 }}></div>
   <div
@@ -32,9 +34,9 @@
     <div class="modal-header">
       {@render header?.()}
       {#if !persistent}
-        <div class="modal-close" onclick={() => (show = false)}>
+        <button type="button" class="modal-close" aria-label="Close" onclick={() => (show = false)}>
           <span class="lnr lnr-cross"></span>
-        </div>
+        </button>
       {/if}
     </div>
     <div class="modal-content">
@@ -44,7 +46,7 @@
 {/if}
 
 <style lang="scss">
-  @import "../css/mixins/devices";
+  @use "../css/mixins/devices" as *;
 
   .modal-backdrop {
     position: fixed;
@@ -88,6 +90,10 @@
       background-color: var(--menu-active);
 
       .modal-close {
+        background: none;
+        border: none;
+        color: inherit;
+        padding: 0;
         font-size: 1.5rem;
         opacity: 0.65;
         cursor: pointer;

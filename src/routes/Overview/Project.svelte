@@ -2,7 +2,7 @@
   import { get } from "svelte/store";
   import { _ } from "svelte-i18n";
 
-  import { state, chapters, scenes } from "../../stores";
+  import { appState, chapters, scenes } from "../../stores";
   import { countCharsHtml, countWordsHtml } from "../../utils";
   import Grid from "../../components/Grid/Grid.svelte";
   import GridElement from "../../components/Grid/GridElement.svelte";
@@ -10,7 +10,7 @@
 
   const analyze = new Promise(resolve => {
     const filteredChapters = get(chapters).filter(
-      e => e.project == $state.currentProject
+      e => e.project == $appState.currentProject
     );
     const filteredScenes = filteredChapters.flatMap(e =>
       get(scenes).filter(s => s.chapter == e.id)

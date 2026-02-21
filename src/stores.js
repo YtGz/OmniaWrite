@@ -474,7 +474,7 @@ const updateLocalTimestamp = () => {
   state.updateLocalTimestamp();
 };
 
-export const state = storeState();
+export const appState = storeState();
 export const projects = storeProjects();
 export const chapters = storeChapters();
 export const scenes = storeScenes();

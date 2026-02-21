@@ -1,6 +1,6 @@
 <script>
   import { fade } from "svelte/transition";
-  import { state, chapters, scenes } from "../../stores";
+  import { appState, chapters, scenes } from "../../stores";
   import { push } from "@keenmate/svelte-spa-router";
   import { _ } from "svelte-i18n";
   import { Grid, GridElement } from "../../components/Grid";
@@ -11,7 +11,7 @@
   let sceneData = $derived.by(() => {
     let data = [];
     $chapters
-      .filter(chapter => chapter.project == $state.currentProject)
+      .filter(chapter => chapter.project == $appState.currentProject)
       .forEach(chapter => {
         $scenes
           .filter(scene => scene.chapter == chapter.id)

@@ -7,7 +7,7 @@
     minimizeWindow,
     isRunningElectron,
   } from "../bridge";
-  import { state, ui } from "../stores";
+  import { appState, ui } from "../stores";
   import { _ } from "svelte-i18n";
 
   import active from "@keenmate/svelte-spa-router/active";
@@ -43,10 +43,10 @@
   };
 
   $effect(() => {
-    if ($state.isUserLoggedIn) {
+    if ($appState.isUserLoggedIn) {
       if (
-        !$state.lastCloudSave ||
-        $state.lastCloudSave < $state.lastLocalSave
+        !$appState.lastCloudSave ||
+        $appState.lastCloudSave < $appState.lastLocalSave
       ) {
         cloudState = "upload";
       } else {
@@ -61,6 +61,7 @@
     <button
       class="burger"
       id="open-sidebar"
+      aria-label="Open sidebar"
       onclick={() => onopenSidebar?.()}
       style="-webkit-app-region: no-drag">
       <span class="lnr lnr-menu"></span>
@@ -103,8 +104,10 @@
             <a href="/cloud" use:link>{$_('header.cloud.title')}</a>
           </li>
           {#if cloudState === 'upload'}
-            <li onclick={syncCloud} style="-webkit-app-region: no-drag">
-              <span class="lnr lnr-cloud-upload"></span>
+            <li style="-webkit-app-region: no-drag">
+              <button type="button" class="icon-btn" aria-label="Sync to cloud" onclick={syncCloud}>
+                <span class="lnr lnr-cloud-upload"></span>
+              </button>
             </li>
           {:else if cloudState === 'done'}
             <li><span class="lnr lnr-cloud-check"></span></li>
@@ -115,28 +118,33 @@
           {/if}
         </ul>
         {#if isRunningElectron}
-          <span
-            class="lnr lnr-cross titlebar"
+          <button
+            type="button"
+            class="lnr lnr-cross titlebar icon-btn" aria-label="Close"
             onclick={closeWindow}
-            style="-webkit-app-region: no-drag"></span>
-          <span
-            class="lnr lnr-frame-expand titlebar"
+            style="-webkit-app-region: no-drag"></button>
+          <button
+            type="button"
+            class="lnr lnr-frame-expand titlebar icon-btn" aria-label="Resize"
             onclick={resizeWindow}
-            style="-webkit-app-region: no-drag"></span>
-          <span
-            class="lnr lnr-chevron-down titlebar"
+            style="-webkit-app-region: no-drag"></button>
+          <button
+            type="button"
+            class="lnr lnr-chevron-down titlebar icon-btn" aria-label="Minimize"
             onclick={minimizeWindow}
-            style="-webkit-app-region: no-drag"></span>
+            style="-webkit-app-region: no-drag"></button>
         {/if}
-        <span
-          class="lnr lnr-question-circle titlebar feedback"
+        <button
+          type="button"
+          class="lnr lnr-question-circle titlebar feedback icon-btn" aria-label="Help"
           style="-webkit-app-region: no-drag"
-          onclick={() => ($ui.support.show = true)}></span>
+          onclick={() => ($ui.support.show = true)}></button>
       </div>
     {/if}
     <button
       class="mobile"
       id="open-navigation"
+      aria-label="Open navigation"
       onclick={() => (navigationState = true)}
       style="-webkit-app-region: no-drag">
       <span class="lnr lnr-book"></span>
@@ -150,7 +158,7 @@
   onclick={() => (cloudToast.show = false)} />
 
 <style lang="scss">
-  @import "../css/mixins/devices";
+  @use "../css/mixins/devices" as *;
 
   header {
     background-color: var(--primary-color);
@@ -325,5 +333,14 @@
 
   .titlebar:hover {
     opacity: 1;
+  }
+
+  .icon-btn {
+    background: none;
+    border: none;
+    color: inherit;
+    font: inherit;
+    padding: 0;
+    cursor: pointer;
   }
 </style>

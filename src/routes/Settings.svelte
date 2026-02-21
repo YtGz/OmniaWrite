@@ -65,17 +65,17 @@
     <OmniaEditor value={preview} />
   </div>
   <br />
-  <small class="link" onclick={() => push('/thirdparty')}>
-    {$_('settings.thirdparty')}
-  </small>
+  <a class="link" href="#/thirdparty">
+    <small>{$_('settings.thirdparty')}</small>
+  </a>
   |
-  <small class="link" onclick={() => push('/policy')}>
-    {$_('cloud.privacy.show')}
-  </small>
+  <a class="link" href="#/policy">
+    <small>{$_('cloud.privacy.show')}</small>
+  </a>
   |
-  <small class="link" onclick={() => push('/disclaimer')}>
-    {$_('install.disclaimer.show')}
-  </small>
+  <a class="link" href="#/disclaimer">
+    <small>{$_('install.disclaimer.show')}</small>
+  </a>
 </div>
 
 <style type="text/css">

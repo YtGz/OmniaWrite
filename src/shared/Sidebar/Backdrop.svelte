@@ -5,12 +5,14 @@
 {#if state}
   <div
     class="backdrop"
+    role="presentation"
     onclick={() => (state = false)}
+    onkeydown={(e) => e.key === 'Escape' && (state = false)}
     style="-webkit-app-region: no-drag"></div>
 {/if}
 
 <style lang="scss">
-  @import "../../css/mixins/devices";
+  @use "../../css/mixins/devices" as *;
 
   .backdrop {
     position: fixed;
