@@ -1,6 +1,6 @@
 <script>
   import { fade } from "svelte/transition";
-  import { appState, projects, chapters } from "../stores";
+  import { appState, projects, chapters } from "../stores.svelte";
   import { reloadWindow } from "../bridge";
   import { _ } from "svelte-i18n";
   import { Grid, GridElement } from "../components/Grid";
@@ -32,7 +32,7 @@
   onchangeProject={(project) => changeProject(project)} />
 
 <div in:fade={{ duration: 100 }} class="overview">
-  {#each $projects.filter(project => project.id == $appState.currentProject) as project}
+  {#each projects.filter(project => project.id == appState.currentProject) as project}
     <h1>{project.title}</h1>
     <ProjectOverview />
   {/each}
@@ -41,7 +41,7 @@
     <GridElement action="true" onclick={() => (showCreateProject = true)}>
       <span class="lnr lnr-plus-circle"></span>
     </GridElement>
-    {#each $projects.sort(sort) as project}
+    {#each projects.sort(sort) as project}
       <GridElement
         title={project.title}
         onclick={() => changeProject(project.id)}>
@@ -51,7 +51,7 @@
         </p>
         <p>
           {$_('overview.project.chapters')}:
-          {$chapters.filter(n => n.project == project.id).length}
+          {chapters.filter(n => n.project == project.id).length}
         </p>
       </GridElement>
     {/each}

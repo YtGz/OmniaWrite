@@ -9,7 +9,7 @@
 
   import Modal from "./Modal.svelte";
 
-  import { ui } from "../stores";
+  import { ui } from "../stores.svelte";
 
   let email = $state("");
   let description = $state("");
@@ -46,7 +46,7 @@
   };
 </script>
 
-<Modal bind:show={$ui.support.show}>
+<Modal bind:show={ui.support.show}>
   {#snippet header()}<h2>{$_('feedback.title')}</h2>{/snippet}
   {#if !sent}
     <p>{$_('feedback.sub')}</p>

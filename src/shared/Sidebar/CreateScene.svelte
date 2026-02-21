@@ -1,7 +1,7 @@
 <script>
   import { _ } from "svelte-i18n";
   import { push } from "@keenmate/svelte-spa-router";
-  import { scenes } from "../../stores";
+  import { scenes } from "../../stores.svelte";
   import { Input, ButtonGroup, Button } from "../../components/Forms";
   import Modal from "../Modal.svelte";
 

@@ -1,6 +1,6 @@
 <script>
   import { _ } from "svelte-i18n";
-  import { projects } from "../../stores";
+  import { projects } from "../../stores.svelte";
   import { Input, ButtonGroup, Button, Select } from "../../components/Forms";
 
   import Modal from "../../shared/Modal.svelte";

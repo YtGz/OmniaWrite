@@ -1,7 +1,7 @@
 <script>
   import { onMount, onDestroy } from "svelte";
   import { fade } from "svelte/transition";
-  import { scenes, chapters, cards, appState, settings, ui } from "../stores";
+  import { scenes, chapters, cards, appState, settings, ui } from "../stores.svelte";
   import { push } from "@keenmate/svelte-spa-router";
   import { _ } from "svelte-i18n";
   import { OmniaEditor } from "@ytgz/omnia-editor";
@@ -16,7 +16,7 @@
   let showCards = $state(false);
   let filteredCards = $state([]);
 
-  let currentScene = $derived($scenes.find(scene => scene.id == routeParams.sceneId));
+  let currentScene = $derived(scenes.find(scene => scene.id == routeParams.sceneId));
 
   $effect(() => {
     appState.setCurrentTitle(
@@ -44,8 +44,8 @@
     const html = editor.getHTML();
     scenes.setSceneContent(routeParams.sceneId, html);
     editorStatus = 2;
-    filteredCards = $cards
-      .filter(c => c.showTooltip && c.project == $appState.currentProject)
+    filteredCards = cards
+      .filter(c => c.showTooltip && c.project == appState.currentProject)
       .filter(c => html.includes(c.title));
   };
 
@@ -55,7 +55,7 @@
   };
 
   const toggleFocus = () => {
-    $ui.focus = !$ui.focus;
+    ui.focus = !ui.focus;
   };
 
   const undo = () => {
@@ -68,7 +68,7 @@
 </script>
 
 <div in:fade={{ duration: 100 }}>
-  {#if $appState.currentProject}
+  {#if appState.currentProject}
     {#if routeParams.sceneId !== null}
       <Modal bind:show={showCards}>
         {#snippet header()}<h2>{$_('write.toolbar.cards')}</h2>{/snippet}
@@ -106,7 +106,7 @@
                 use:tippy={{ content: $_('write.toolbar.cards'), placement: 'bottom' }}
                 onclick={() => (showCards = true)}></button>
             {/if}
-            {#if $ui.focus}
+            {#if ui.focus}
               <select
                 id="focusSceneSelect"
                 transition:fade={{ duration: 100 }}
@@ -114,9 +114,9 @@
                 class="lnr"
                 use:tippy={{ content: $_('write.toolbar.switchScene'), placement: 'bottom' }}>
                 <option value="" selected="selected">&#xe871;</option>
-                {#each $chapters.filter(chapter => chapter.project == $appState.currentProject) as chapter}
+                {#each chapters.filter(chapter => chapter.project == appState.currentProject) as chapter}
                   <optgroup label={chapter.title}>
-                    {#each $scenes.filter(scene => scene.chapter == chapter.id) as scene}
+                    {#each scenes.filter(scene => scene.chapter == chapter.id) as scene}
                       <option value={scene.id}>{scene.title}</option>
                     {/each}
                   </optgroup>
@@ -131,8 +131,8 @@
               aria-label="Toggle focus"
               use:tippy={{ content: $_('write.toolbar.focus'), placement: 'bottom' }}
               onclick={toggleFocus}
-              class:lnr-eye={!$ui.focus}
-              class:lnr-exit={$ui.focus}></button>
+              class:lnr-eye={!ui.focus}
+              class:lnr-exit={ui.focus}></button>
             <span
               class="lnr"
               use:tippy={{ content: $_('write.toolbar.savestate'), placement: 'bottom' }}
@@ -150,7 +150,7 @@
         <OmniaEditor
           bind:this={editor}
           value={currentScene.content || ""}
-          spellcheck={$settings.spellCheck}
+          spellcheck={settings.spellCheck}
           oninit={() => (editorStatus = 0)}
           onchange={change} />
       </div>

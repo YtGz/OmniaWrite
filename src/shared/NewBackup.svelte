@@ -1,7 +1,7 @@
 <script>
   import { onMount } from "svelte";
   import { _ } from "svelte-i18n";
-  import { appState } from "../stores";
+  import { appState } from "../stores.svelte";
   import { reloadWindow } from "../bridge";
   import cloud from "../appwrite";
   import Modal from "./Modal.svelte";
@@ -18,7 +18,7 @@
     if (latest.files.length === 0) return;
 
     const latestTimestamp = new Date(latest.files[0].$createdAt).getTime() / 1000;
-    show = $appState.lastCloudSave < latestTimestamp;
+    show = appState.lastCloudSave < latestTimestamp;
   });
 
   const download = () => {

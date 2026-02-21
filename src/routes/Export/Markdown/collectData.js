@@ -1,6 +1,5 @@
-import { get } from "svelte/store";
 
-import { projects, chapters, scenes } from "../../../stores";
+import { projects, chapters, scenes } from "../../../stores.svelte";
 
 import { smartenText, toFileName } from "../../../utils";
 
@@ -62,7 +61,7 @@ export default async project => {
   const chapterMapper = currentChapter => {
     return (
       `## ${toMarkdown(currentChapter.title)}\n\n` +
-      get(scenes)
+      scenes
         .filter(scene => scene.chapter == currentChapter.id && scene.content)
         .sort(compare)
         .map(sceneMapper)
@@ -70,9 +69,9 @@ export default async project => {
     );
   };
 
-  const title = get(projects).find(e => e.id == project).title;
+  const title = projects.find(e => e.id == project).title;
   const frontpage = `# ${toMarkdown(smartenText(title))}\n\n`;
-  const toc = get(chapters)
+  const toc = chapters
     .filter(e => e.project == project)
     .sort(compare)
     .reduce(
@@ -84,7 +83,7 @@ export default async project => {
       ""
     );
 
-  const contents = get(chapters)
+  const contents = chapters
     .filter(e => e.project == project)
     .sort(compare)
     .map(chapterMapper)

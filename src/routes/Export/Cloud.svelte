@@ -1,8 +1,7 @@
 <script>
-  import { get } from "svelte/store";
   import { fade } from "svelte/transition";
   import { _, locales } from "svelte-i18n";
-  import { appState, projects } from "../../stores";
+  import { appState, projects } from "../../stores.svelte";
   import { getBase64, toFileName } from "../../utils";
   import { saveFile } from "../../bridge";
   import {
@@ -27,7 +26,7 @@
     publisher: "",
     lang: "en",
     template: "",
-    ...get(projects).filter(p => p.id === $appState.currentProject)[0],
+    ...projects.filter(p => p.id === appState.currentProject)[0],
   });
 
   let selectTemplate = $state(false);
@@ -77,7 +76,7 @@
     progress.active = true;
     try {
       const file = await getBase64(cover[0]);
-      const generateDownload = new Export($appState.currentProject);
+      const generateDownload = new Export(appState.currentProject);
       const data = await generateDownload.fetchData();
       const response = await fetch(exportApi, {
         method: "POST",

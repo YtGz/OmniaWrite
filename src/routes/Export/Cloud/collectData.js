@@ -1,6 +1,5 @@
-import { get } from "svelte/store";
 
-import { chapters, scenes } from "../../../stores";
+import { chapters, scenes } from "../../../stores.svelte";
 
 export default class Export {
   constructor(id) {
@@ -11,14 +10,14 @@ export default class Export {
     const chapterMapper = currentChapter => {
       return {
         title: currentChapter.title,
-        data: get(scenes)
+        data: scenes
           .filter(scene => scene.chapter == currentChapter.id && scene.content)
           .sort(this.compare)
           .map(sceneMapper)
           .join("<hr />"),
       };
     };
-    return get(chapters)
+    return chapters
       .filter(e => e.project == this.projectId)
       .sort(this.compare)
       .map(chapterMapper);

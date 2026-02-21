@@ -1,8 +1,7 @@
 <script>
   import { onMount } from "svelte";
-  import { get } from "svelte/store";
   import { _ } from "svelte-i18n";
-  import { projects, chapters, scenes, appState } from "../../stores";
+  import { projects, chapters, scenes, appState } from "../../stores.svelte";
   import { reloadWindow } from "../../bridge";
   import { Input, Button, ButtonGroup, Select } from "../../components/Forms";
 
@@ -21,7 +20,7 @@
   let checkForm = $derived(form.title !== "");
 
   onMount(() => {
-    form = get(projects).filter(project => project.id == id)[0];
+    form = projects.filter(project => project.id == id)[0];
   });
 
   const save = () => {
@@ -34,7 +33,7 @@
   const removeProject = project => {
     let confirmed = confirm($_("overview.project.confirmDelete"));
     if (confirmed == true) {
-      $chapters
+      chapters
         .filter(ch => ch.project == project)
         .forEach(chapter => {
           scenes.removeAllScenes(chapter.id);

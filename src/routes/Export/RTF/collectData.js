@@ -1,6 +1,5 @@
-import { get } from "svelte/store";
 
-import { projects, chapters, scenes } from "../../../stores";
+import { projects, chapters, scenes } from "../../../stores.svelte";
 
 import { smartenText, toFileName } from "../../../utils";
 
@@ -79,7 +78,7 @@ export default class Export {
     const chapterMapper = currentChapter => {
       return (
         `{\\f1\\fs60\\qc\\sa500\\b ${toRTF(currentChapter.title)}\\par}\n` +
-        get(scenes)
+        scenes
           .filter(scene => scene.chapter == currentChapter.id && scene.content)
           .sort(this.compare)
           .map(sceneMapper)
@@ -87,7 +86,7 @@ export default class Export {
       );
     };
 
-    const title = get(projects).find(e => e.id == this.projectId).title;
+    const title = projects.find(e => e.id == this.projectId).title;
     const fonts =
       "{\\fonttbl{\\f0\\froman Times New Roman;}{\\f1\\fswiss Arial;}{\\f2\\fmodern Courier New;}}\n";
     const colors = "{\\colortbl;\\red160\\green160\\blue160;}\n";
@@ -95,7 +94,7 @@ export default class Export {
       smartenText(title)
     )}\\par}\\page\n`;
 
-    const contents = get(chapters)
+    const contents = chapters
       .filter(e => e.project == this.projectId)
       .sort(this.compare)
       .map(chapterMapper)

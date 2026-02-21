@@ -1,6 +1,5 @@
 import { Client, Account, Storage, ID, Query } from "appwrite";
-import { get } from "svelte/store";
-import { appState, settings } from "./stores";
+import { appState, settings } from "./stores.svelte";
 
 const APP_ENDPOINT = process.env.APPWRITE_ENDPOINT;
 const APP_PROJECT = process.env.APPWRITE_PROJECT;
@@ -12,7 +11,7 @@ const client = new Client();
 client
   .setEndpoint(APP_ENDPOINT)
   .setProject(APP_PROJECT)
-  .setLocale(get(settings).language || "en");
+  .setLocale(settings.language || "en");
 
 const account = new Account(client);
 const storage = new Storage(client);

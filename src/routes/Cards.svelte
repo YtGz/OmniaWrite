@@ -1,6 +1,6 @@
 <script>
   import { fade } from "svelte/transition";
-  import { cards, appState } from "../stores";
+  import { cards, appState } from "../stores.svelte";
   import { _ } from "svelte-i18n";
   import { Grid, GridElement } from "../components/Grid";
   import {
@@ -36,7 +36,7 @@
   const createCard = () => {
     if (newCardObject.title.length > 0) {
       cards.createCard(
-        $appState.currentProject,
+        appState.currentProject,
         newCardObject.title,
         newCardObject.content,
         newCardObject.showTooltip
@@ -61,13 +61,13 @@
   };
 
   let filteredCards = $derived(searchInput
-    ? $cards.filter(
+    ? cards.filter(
         card =>
-          card.project == $appState.currentProject &&
+          card.project == appState.currentProject &&
           (card.title.toLowerCase().includes(searchInput.toLowerCase()) ||
             card.content.toLowerCase().includes(searchInput.toLowerCase()))
       )
-    : $cards.filter(card => card.project == $appState.currentProject));
+    : cards.filter(card => card.project == appState.currentProject));
 </script>
 
 <Modal bind:show={showCreateCard}>
@@ -123,7 +123,7 @@
 </Modal>
 
 <div in:fade={{ duration: 100 }}>
-  {#if $appState.currentProject}
+  {#if appState.currentProject}
     <Search
       placeholder={$_('cards.search')}
       bind:value={searchInput}

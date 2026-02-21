@@ -7,7 +7,7 @@
     minimizeWindow,
     isRunningElectron,
   } from "../bridge";
-  import { appState, ui } from "../stores";
+  import { appState, ui } from "../stores.svelte";
   import { _ } from "svelte-i18n";
 
   import active from "@keenmate/svelte-spa-router/active";
@@ -43,10 +43,10 @@
   };
 
   $effect(() => {
-    if ($appState.isUserLoggedIn) {
+    if (appState.isUserLoggedIn) {
       if (
-        !$appState.lastCloudSave ||
-        $appState.lastCloudSave < $appState.lastLocalSave
+        !appState.lastCloudSave ||
+        appState.lastCloudSave < appState.lastLocalSave
       ) {
         cloudState = "upload";
       } else {
@@ -56,7 +56,7 @@
   });
 </script>
 
-<header style="-webkit-app-region: drag" class:focus={$ui.focus}>
+<header style="-webkit-app-region: drag" class:focus={ui.focus}>
   <nav class="header noselect">
     <button
       class="burger"
@@ -138,7 +138,7 @@
           type="button"
           class="lnr lnr-question-circle titlebar feedback icon-btn" aria-label="Help"
           style="-webkit-app-region: no-drag"
-          onclick={() => ($ui.support.show = true)}></button>
+          onclick={() => (ui.support.show = true)}></button>
       </div>
     {/if}
     <button

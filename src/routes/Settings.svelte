@@ -2,7 +2,7 @@
   import { fade } from "svelte/transition";
   import { _, locales } from "svelte-i18n";
   import { push } from "@keenmate/svelte-spa-router";
-  import { settings } from "../stores";
+  import { settings } from "../stores.svelte";
   import { Select, Checkbox, Range } from "../components/Forms";
   import { OmniaEditor } from "@ytgz/omnia-editor";
 
@@ -30,32 +30,32 @@
 
   <Select
     label={$_('settings.appereance.theme.title')}
-    bind:value={$settings.theme}
+    bind:value={settings.theme}
     options={themes} />
   <Select
     label={$_('settings.appereance.language.title')}
-    bind:value={$settings.language}
+    bind:value={settings.language}
     options={languages} />
 
   <h2>{$_('settings.common.title')}</h2>
   <Checkbox
     label={$_('settings.common.lastLocation')}
-    bind:value={$settings.lastLocation}
+    bind:value={settings.lastLocation}
     helper={$_('settings.helpers.lastLocation')} />
 
   <h2>{$_('header.write.title')}</h2>
 
   <Checkbox
     label={$_('settings.write.autosave')}
-    bind:value={$settings.autosave}
+    bind:value={settings.autosave}
     helper={$_('settings.helpers.autosave')} />
   <Checkbox
     label={$_('settings.write.spellCheck')}
-    bind:value={$settings.spellCheck}
+    bind:value={settings.spellCheck}
     helper={$_('settings.helpers.spellCheck')} />
   <Range
     label={$_('settings.write.fontsize')}
-    bind:value={$settings.fontsize}
+    bind:value={settings.fontsize}
     min=".6"
     max="1.6"
     step=".1"

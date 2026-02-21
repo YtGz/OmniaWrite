@@ -1,5 +1,5 @@
 <script>
-  import { intern, settings } from "../stores";
+  import { intern, settings } from "../stores.svelte";
   import { _, locales } from "svelte-i18n";
   import { Button, ButtonGroup, Select, Checkbox } from "../components/Forms";
   import Modal from "./Modal.svelte";
@@ -19,7 +19,7 @@
   <div class="install">
     <Select
       label={$_('settings.appereance.language.title')}
-      bind:value={$settings.language}
+      bind:value={settings.language}
       options={languages} />
     <Checkbox
       bind:value={disclaimer}
@@ -28,7 +28,7 @@
     <ButtonGroup>
       <Button
         disabled={!disclaimer}
-        onclick={() => ($intern.installed = true)}>
+        onclick={() => (intern.installed = true)}>
         {$_('install.action')}
       </Button>
     </ButtonGroup>

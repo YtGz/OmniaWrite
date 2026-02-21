@@ -1,5 +1,5 @@
 <script>
-  import { appState, chapters, scenes } from "../stores";
+  import { appState, chapters, scenes } from "../stores.svelte";
   import { fly } from "svelte/transition";
   import { _ } from "svelte-i18n";
   import tippy from "sveltejs-tippy";
@@ -58,7 +58,7 @@
 {/if}
 
 {#if modals.editProject}
-  <EditProject bind:show={modals.editProject} id={$appState.currentProject} />
+  <EditProject bind:show={modals.editProject} id={appState.currentProject} />
 {/if}
 <CreateChapter bind:show={modals.createChapter} />
 <CreateScene
@@ -80,12 +80,12 @@
     <ul class="menu">
       <Backdrop bind:state={sidebarState} />
       <Close bind:state={sidebarState} />
-      {#if $appState.currentProject}
-        {#each $chapters
-          .filter(chapter => chapter.project == $appState.currentProject)
+      {#if appState.currentProject}
+        {#each chapters
+          .filter(chapter => chapter.project == appState.currentProject)
           .sort((a, b) => a.order - b.order) as chapter, i}
           <Chapter {chapter} onedit={editChapter}>
-            {#each $scenes
+            {#each scenes
               .filter(scene => scene.chapter == chapter.id)
               .sort((a, b) => a.order - b.order) as scene}
               <Scene {scene} onedit={editScene} />
@@ -112,7 +112,7 @@
         <Placeholder />
       {/if}
     </ul>
-    {#if $appState.currentProject}
+    {#if appState.currentProject}
       <div class="actions">
         <button
           type="button"

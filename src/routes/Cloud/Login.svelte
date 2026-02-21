@@ -3,7 +3,7 @@
   import { _ } from "svelte-i18n";
   import { push } from "@keenmate/svelte-spa-router";
   import { reloadWindow } from "../../bridge";
-  import { appState } from "../../stores";
+  import { appState } from "../../stores.svelte";
 
   import {
     InputEmail,
@@ -50,7 +50,7 @@
   };
 </script>
 
-{#if !$appState.isUserLoggedIn}
+{#if !appState.isUserLoggedIn}
   <div in:fade={{ duration: 100 }}>
     <h2>{$_('cloud.login.title')}</h2>
     <Alert danger bind:show={showAlert}>

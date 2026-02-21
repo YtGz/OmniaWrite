@@ -1,7 +1,7 @@
 <script>
   import { fade } from "svelte/transition";
   import { _ } from "svelte-i18n";
-  import { appState } from "../../stores";
+  import { appState } from "../../stores.svelte";
   import { Button, ButtonGroup } from "../../components/Forms";
   import exportMarkdown from "./Markdown/collectData";
   import { saveFile } from "../../bridge";
@@ -14,7 +14,7 @@
 
   const download = async () => {
     progress = true;
-    const data = await exportMarkdown($appState.currentProject);
+    const data = await exportMarkdown(appState.currentProject);
     const blob = new Blob([data.document], {
       type: "text/plain",
     });

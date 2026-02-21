@@ -1,6 +1,6 @@
 <script>
   import { _ } from "svelte-i18n";
-  import { chapters } from "../../stores";
+  import { chapters } from "../../stores.svelte";
   import tippy from "sveltejs-tippy";
 
   let { chapter, onedit, children } = $props();

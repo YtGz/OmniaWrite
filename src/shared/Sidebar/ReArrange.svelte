@@ -1,8 +1,7 @@
 <script>
   import { onDestroy, onMount } from "svelte";
-  import { get } from "svelte/store";
   import { _ } from "svelte-i18n";
-  import { chapters, scenes, appState } from "../../stores";
+  import { chapters, scenes, appState } from "../../stores.svelte";
 
   import Sortable, {
     AutoScroll,
@@ -82,13 +81,13 @@
 <Modal bind:show>
   {#snippet header()}<h2>{$_('sidebar.editOrder')}</h2>{/snippet}
   <ul id="order" class="chapters">
-    {#each get(chapters)
-      .filter(chapter => chapter.project == $appState.currentProject)
+    {#each chapters
+      .filter(chapter => chapter.project == appState.currentProject)
       .sort((a, b) => a.order - b.order) as chapter, i}
       <li class="parent" class:open={chapter.ui.open} data-id={chapter.id}>
         <span>{chapter.title}</span>
         <ul class="scenes">
-          {#each get(scenes)
+          {#each scenes
             .filter(scene => scene.chapter == chapter.id)
             .sort((a, b) => a.order - b.order) as scene}
             <li data-id={scene.id}><span>{scene.title}</span></li>

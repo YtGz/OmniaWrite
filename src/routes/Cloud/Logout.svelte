@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   import { _ } from "svelte-i18n";
   import { reloadWindow } from "../../bridge";
-  import { appState } from "../../stores";
+  import { appState } from "../../stores.svelte";
 
   import cloud from "../../appwrite";
 

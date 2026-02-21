@@ -1,6 +1,6 @@
 <script>
   import { _ } from "svelte-i18n";
-  import { appState, chapters } from "../../stores";
+  import { appState, chapters } from "../../stores.svelte";
   import { Input, Button, ButtonGroup } from "../../components/Forms";
   import Modal from "../Modal.svelte";
 
@@ -9,7 +9,7 @@
   let title = $state("");
 
   const createChapter = () => {
-    chapters.createChapter($appState.currentProject, title);
+    chapters.createChapter(appState.currentProject, title);
     show = false;
     title = "";
   };

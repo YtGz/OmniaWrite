@@ -1,19 +1,18 @@
 <script>
-  import { get } from "svelte/store";
   import { _ } from "svelte-i18n";
 
-  import { appState, chapters, scenes } from "../../stores";
+  import { appState, chapters, scenes } from "../../stores.svelte";
   import { countCharsHtml, countWordsHtml } from "../../utils";
   import Grid from "../../components/Grid/Grid.svelte";
   import GridElement from "../../components/Grid/GridElement.svelte";
   import Spinner from "../../shared/Spinner.svelte";
 
   const analyze = new Promise(resolve => {
-    const filteredChapters = get(chapters).filter(
-      e => e.project == $appState.currentProject
+    const filteredChapters = chapters.filter(
+      e => e.project == appState.currentProject
     );
     const filteredScenes = filteredChapters.flatMap(e =>
-      get(scenes).filter(s => s.chapter == e.id)
+      scenes.filter(s => s.chapter == e.id)
     );
     const filteredRest = filteredScenes
       .filter(e => e.content)

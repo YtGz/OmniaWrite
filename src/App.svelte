@@ -8,7 +8,7 @@
     isRunningElectron,
     isRunningCapacitor,
   } from "./bridge";
-  import { appState, settings, intern, ui } from "./stores";
+  import { appState, settings, intern, ui } from "./stores.svelte";
   import cloud from "./appwrite";
   import HeaderComponent from "./shared/Header.svelte";
   import SidebarComponent from "./shared/Sidebar.svelte";
@@ -29,7 +29,7 @@
   import PolicyRoute from "./routes/Cloud/Policy.svelte";
   import BrowserSupport from "./shared/BrowserSupport.svelte";
 
-  locale.set($settings.language);
+  locale.set(settings.language);
 
   let { version } = $props();
 
@@ -118,14 +118,14 @@
 
   onMount(() => {
     console.log(`Version: ${version}`);
-    if ($settings.lastLocation) {
-      if ($appState.lastLocation) {
-        replace($appState.lastLocation);
+    if (settings.lastLocation) {
+      if (appState.lastLocation) {
+        replace(appState.lastLocation);
       }
     }
-    if ($intern.installed && version !== $intern.version) {
+    if (intern.installed && version !== intern.version) {
       showChangelog = true;
-      $intern.version = version;
+      intern.version = version;
     }
   });
 
@@ -137,11 +137,11 @@
    * Listen for settings
    */
   $effect(() => {
-    document.body.className = $settings.theme;
-    locale.set($settings.language);
+    document.body.className = settings.theme;
+    locale.set(settings.language);
     document.body.style.setProperty(
       "--editor-font-size",
-      ($settings.fontsize === undefined ? 1 : $settings.fontsize) + "rem"
+      (settings.fontsize === undefined ? 1 : settings.fontsize) + "rem"
     );
   });
 </script>
@@ -157,17 +157,17 @@
     <BrowserSupport />
     <Support />
     <NewUpdate bind:show={showChangelog} />
-    {#if $appState.isUserLoggedIn}
+    {#if appState.isUserLoggedIn}
       <NewBackup />
     {/if}
-    {#if !$intern.installed}
+    {#if !intern.installed}
       <Install />
     {/if}
     <HeaderComponent
       bind:navigationState
       onopenSidebar={() => (sidebarState = true)} />
     <SidebarComponent bind:sidebarState />
-    <div class="content" class:focus={$ui.focus}>
+    <div class="content" class:focus={ui.focus}>
       <Toast
         bind:show={updateAvailable}
         text={$_('common.update-toast')}

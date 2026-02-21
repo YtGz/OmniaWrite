@@ -1,19 +1,18 @@
 <script>
-  import { get } from "svelte/store";
   import { link, location } from "@keenmate/svelte-spa-router";
   import active from "@keenmate/svelte-spa-router/active";
 
-  import { appState, tabs, scenes } from "../../stores";
+  import { appState, tabs, scenes } from "../../stores.svelte";
 
   const createTab = () => {
-    tabs.createTab($appState.currentProject, location());
+    tabs.createTab(appState.currentProject, location());
   };
 
   const getTitle = location => {
     const [type, id] = location.split("/").filter(String);
     switch (type) {
       case "write":
-        return get(scenes).find(s => s.id == id).title;
+        return scenes.find(s => s.id == id).title;
 
       default:
         return "-";
@@ -23,7 +22,7 @@
 
 <div class="tabs" style="-webkit-app-region: no-drag">
   <ul>
-    {#each $tabs.filter(tabs => tabs.project == $appState.currentProject) as tab}
+    {#each tabs.filter(tabs => tabs.project == appState.currentProject) as tab}
       <li class="tab" use:active={tab.link}>
         <a href={tab.link} use:link>{getTitle(tab.link)}</a>
         <button
@@ -33,7 +32,7 @@
           onclick={() => tabs.removeTab(tab.id)}></button>
       </li>
     {/each}
-    {#if location() != '/write/' && location().includes('write') && !$tabs.some(tab => tab.link == location())}
+    {#if location() != '/write/' && location().includes('write') && !tabs.some(tab => tab.link == location())}
       <li class="tab new">
         <button type="button" class="tab-btn" aria-label="Add tab" onclick={createTab}>
           <span class="lnr lnr-plus-circle"></span>

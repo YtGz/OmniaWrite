@@ -4,8 +4,7 @@ import { enUS as en } from "date-fns/locale/en-US";
 import { pt } from "date-fns/locale/pt";
 import { ru } from "date-fns/locale/ru";
 import { de } from "date-fns/locale/de";
-import { settings } from "./stores";
-import { get } from "svelte/store";
+import { settings } from "./stores.svelte";
 
 let locales = { es, en, pt, ru, de };
 
@@ -187,13 +186,13 @@ export const toFileName = text => {
 
 export const formatDistance = timestamp =>
   formatDistanceToNow(fromUnixTime(timestamp), {
-    locale: locales[get(settings).language],
+    locale: locales[settings.language],
     addSuffix: true,
   });
 
 export const formatDate = timestamp =>
   format(fromUnixTime(timestamp), "PPPp", {
-    locale: locales[get(settings).language],
+    locale: locales[settings.language],
   });
 
 export const checkBrowser = () => {
